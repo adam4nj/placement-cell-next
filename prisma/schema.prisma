@@ -27,8 +27,8 @@ model Account {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId])
   @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model Session {
@@ -47,13 +47,23 @@ enum UserType {
   STUDENT
 }
 
+model Skill {
+  id        Int     @id @default(autoincrement())
+  skill     String?
+  student   User    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  studentId String
+
+  @@index([studentId])
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  role          UserType  @default(STUDENT)
+  role          String?
+  skill         Skill[]
   jobs          Job[]
   accounts      Account[]
   sessions      Session[]
