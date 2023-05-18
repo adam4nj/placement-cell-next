@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
-export default () => {
+export default function Hero(){
 
     const [state, setState] = useState(false)
 
@@ -16,7 +16,7 @@ export default () => {
 
     useEffect(() => {
         document.onclick = (e) => {
-            const target = e.target;
+            const target = e.target as HTMLElement;
             if (!target.closest(".menu-btn")) setState(false);
         };
     }, [])
