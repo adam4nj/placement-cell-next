@@ -1,3 +1,4 @@
+import Image from "next/image";
 import SignUpForm from "./components/SignUpForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -6,8 +7,9 @@ export default function SignUp() {
     <main className="w-full h-screen flex flex-col items-center justify-center bg-gray-50 sm:px-4">
       <div className="w-full space-y-6 text-gray-600 sm:max-w-md">
         <div className="text-center">
-          <img
+          <Image
             src="https://floatui.com/logo.svg"
+            alt="Placement Cell Logo"
             width={150}
             className="mx-auto"
           />

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
@@ -25,11 +26,11 @@ export default function Hero(){
     const Brand = () => (
         <div className="flex items-center justify-between py-5 md:block">
             <a href="javascript:void(0)">
-                <img
+                <Image
                     src="https://www.floatui.com/logo-dark.svg"
                     width={120}
                     height={50}
-                    alt="Float UI logo"
+                    alt="Placement Cell Logo"
                 />
             </a>
             <div className="md:hidden">
