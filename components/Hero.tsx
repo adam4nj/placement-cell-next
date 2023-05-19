@@ -25,7 +25,7 @@ export default function Hero(){
 
     const Brand = () => (
         <div className="flex items-center justify-between py-5 md:block">
-            <a href="javascript:void(0)">
+            <a href="/">
                 <Image
                     src="https://www.floatui.com/logo-dark.svg"
                     width={120}
