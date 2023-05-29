@@ -1,65 +1,106 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
-import { useSelectedLayoutSegment } from "next/navigation"
+import { useState } from "react";
+import { signIn, signOut, useSession } from "next-auth/react";
+import { Router } from "next/router";
+import { redirect } from "next/navigation";
+import SignInButton from "./SignInButton";
 
-import { cn } from "@/lib/utils"
-import { MobileNav } from "./MobileNav"
+const Navbar = () => {
+  const [state, setState] = useState(false);
+  const { data: session } = useSession();
 
-export interface NavItem {
-  title: string
-  href: string
-  disabled?: boolean
-}
-
-interface MainNavProps {
-  items?: NavItem[]
-  children?: React.ReactNode
-}
-
-
-export function MainNav({ items, children }: MainNavProps) {
-  const segment = useSelectedLayoutSegment()
-  const [showMobileMenu, setShowMobileMenu] = React.useState<boolean>(false)
+  // Replace / paths with your paths
+  const navigation = [
+    { title: "Features", path: "/" },
+    { title: "Integrations", path: "/" },
+    { title: "Customers", path: "/" },
+    { title: "Pricing", path: "/" },
+  ];
 
   return (
-    <div className="flex gap-6 md:gap-10">
-      <Link href="/" className="hidden items-center space-x-2 md:flex">
-        Logo
-        <span className="hidden font-bold sm:inline-block">
-          Site Name
-        </span>
-      </Link>
-      {items?.length ? (
-        <nav className="hidden gap-6 md:flex">
-          {items?.map((item, index) => (
-            <Link
-              key={index}
-              href={item.disabled ? "#" : item.href}
-              className={cn(
-                "flex items-center text-lg font-medium transition-colors hover:text-foreground/80 sm:text-sm",
-                item.href.startsWith(`/${segment}`)
-                  ? "text-foreground"
-                  : "text-foreground/60",
-                item.disabled && "cursor-not-allowed opacity-80"
-              )}
+    <nav className="bg-white border-b w-full md:static md:text-sm md:border-none">
+      <div className="items-center px-4 max-w-screen-xl mx-auto md:flex md:px-8">
+        <div className="flex items-center justify-between py-3 md:py-5 md:block">
+          <a href="/">
+            <img
+              src="https://www.floatui.com/logo.svg"
+              width={120}
+              height={50}
+              alt="Float UI logo"
+            />
+          </a>
+          <div className="md:hidden">
+            <button
+              className="text-gray-500 hover:text-gray-800"
+              onClick={() => setState(!state)}
             >
-              {item.title}
-            </Link>
-          ))}
-        </nav>
-      ) : null}
-      <button
-        className="flex items-center space-x-2 md:hidden"
-        onClick={() => setShowMobileMenu(!showMobileMenu)}
-      >
-        {showMobileMenu ? <div>X</div> : <div>Logo</div>}
-        <span className="font-bold">Menu</span>
-      </button>
-      {showMobileMenu && items && (
-        <MobileNav items={items}>{children}</MobileNav>
-      )}
-    </div>
-  )
-}
+              {state ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
+        <div
+          className={`flex-1 pb-3 mt-8 md:block md:pb-0 md:mt-0 ${
+            state ? "block" : "hidden"
+          }`}
+        >
+          <ul className="justify-end items-center space-y-6 md:flex md:space-x-6 md:space-y-0">
+            {navigation.map((item, idx) => {
+              return (
+                <li key={idx} className="text-gray-700 hover:text-indigo-600">
+                  <a href={item.path} className="block">
+                    {item.title}
+                  </a>
+                </li>
+              );
+            })}
+            <span className="hidden w-px h-6 bg-gray-300 md:block"></span>
+            <div className="space-y-3 items-center gap-x-6 md:flex md:space-y-0">
+              <li>
+                <a
+                  href="/"
+                  className="block py-3 text-center text-gray-700 hover:text-indigo-600 border rounded-lg md:border-none"
+                >
+                  Log in
+                </a>
+              </li>
+              <li>
+                <SignInButton />
+              </li>
+            </div>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;
