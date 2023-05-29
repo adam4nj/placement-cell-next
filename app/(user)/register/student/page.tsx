@@ -1,5 +1,4 @@
 "use client";
-import RegisterForm from "@/components/RegisterForm";
 
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
