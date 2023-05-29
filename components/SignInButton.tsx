@@ -9,23 +9,22 @@ export default function SignInButton() {
       <>
         Signed in as {session?.user?.email} <br />
         <button
-                onClick={() => signOut()}
-                className="px-4 py-2 text-white bg-gray-600 rounded-md shadow hover:bg-gray-800"
-                >
-                Sign Out
-              </button>
-        
+          onClick={() => signOut()}
+          className="px-4 py-2 text-white bg-gray-600 rounded-md shadow hover:bg-gray-800"
+        >
+          Sign Out
+        </button>
       </>
     );
   }
   return (
     <>
       <button
-                onClick={() => signIn("google")}
-                className="px-4 py-2 text-white bg-gray-600 rounded-md shadow hover:bg-gray-800"
-                >
-                Sign in
-              </button>
+        onClick={() => signIn()}
+        className="px-4 py-2 text-white bg-gray-600 rounded-md shadow hover:bg-gray-800"
+      >
+        Sign in
+      </button>
     </>
   );
 }

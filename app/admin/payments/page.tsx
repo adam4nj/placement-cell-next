@@ -1,6 +1,6 @@
 import { Payment, columns } from "./components/columns"
-import { DataTable } from "./components/dataTable"
-import  Search  from "../components/searchBox"
+import { DataTable } from "@/components/dataTable"
+import  Search  from "@/components/searchBox"
 
 async function getData(): Promise<Payment[]> {
   // Fetch data from your API here.
@@ -8,10 +8,18 @@ async function getData(): Promise<Payment[]> {
     {
       id: "728ed52f",
       amount: 100,
-      status: "pending",
+      balance:0,
+      status: "Pending",
       email: "m@example.com",
     },
-    // ...
+    {
+      id: "728ed51f",
+      amount: 100,
+      balance:0,
+      status: "Pending",
+      email: "m@example.com",
+    },
+    
   ]
 }
 
@@ -26,9 +34,11 @@ export default async function PaymentsPage({
   //nextjs-planetscale-nextauth-tailwindcss-template/app/page.tsx -- See this
 
   return (
-    <main>
+    <main className="container">
+      <div className="mx-auto">
       <Search />
-    <div className="container mx-auto py-10">
+      </div>
+    <div className="mx-auto py-10">
       <DataTable columns={columns} data={data} />
     </div>
     </main>
