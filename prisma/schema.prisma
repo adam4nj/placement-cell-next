@@ -47,17 +47,26 @@ enum UserType {
   STUDENT
 }
 
+enum Status {
+  Accepted
+  Rejected
+  Pending
+}
+
 model User {
-  id            String    @id @default(cuid())
+  id            String         @id @default(cuid())
   name          String?
-  username      String    @unique
+  username      String         @unique
   password      String
-  email         String?   @unique
-  emailVerified DateTime? @default(now())
+  email         String?        @unique
+  emailVerified DateTime       @default(now())
   image         String?
   role          UserType
   accounts      Account[]
   sessions      Session[]
+  Notification  Notification[]
+  Student       Student[]
+  Company       Company[]
 }
 
 model VerificationToken {
@@ -66,4 +75,78 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Company {
+  companyId   String       @id @default(cuid())
+  companyName String
+  address     String       @db.VarChar(255)
+  status      Status
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  Job         Job[]
+  Internship  Internship[]
+
+  @@index([userId])
+}
+
+model Student {
+  studentId String     @id @default(cuid())
+  fName     String
+  lName     String?
+  status    Status
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  Feedback  Feedback[]
+
+  @@index([userId])
+}
+
+model Job {
+  jobId     String   @id @default(cuid())
+  title     String
+  location  String?
+  salary    Int?
+  createdAt DateTime @default(now())
+  details   String?  @db.VarChar(255)
+  company   Company  @relation(fields: [companyId], references: [companyId], onDelete: Cascade)
+  companyId String
+
+  @@index([companyId])
+}
+
+model Internship {
+  internshipId String   @id @default(cuid())
+  title        String
+  location     String?
+  salary       Int?
+  createdAt    DateTime @default(now())
+  details      String?  @db.VarChar(255)
+  company      Company  @relation(fields: [companyId], references: [companyId], onDelete: Cascade)
+  companyId    String
+
+  @@index([companyId])
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  subject   String
+  feedback  String?  @db.VarChar(255)
+  rating    Int
+  student   Student  @relation(fields: [studentId], references: [studentId], onDelete: Cascade)
+  studentId String
+
+  @@index([studentId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  title     String
+  content   String?  @db.VarChar(255)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+
+  @@index([userId])
 }
