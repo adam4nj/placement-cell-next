@@ -1,14 +1,15 @@
 import { db } from "@/lib/db";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { PrismaAdapter } from "@auth/prisma-adapter";
 import { compare } from "bcrypt";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import Google from "next-auth/providers/google";
+import { Adapter } from "next-auth/adapters";
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(db),
+  adapter: PrismaAdapter(db) as Adapter,
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60,
   },
   providers: [
     CredentialsProvider({
@@ -26,21 +27,21 @@ export const authOptions: NextAuthOptions = {
       },
 
       async authorize(credentials) {
-        // Add logic here to look up the user from the credentials supplied
         if (!credentials?.username || !credentials.password) return null;
 
-        const user = await db.user.findUniqueOrThrow({
+        const user = await db.user.findUnique({
           where: {
             username: credentials.username,
           },
         });
-        const isValidPassword = credentials.password === user.password;
-        if (!user || !isValidPassword) return null;
+        if (!user) return null;
+        const isValidPassword = compare(credentials.password, user.password);
+        if (!isValidPassword) return null;
 
         return {
           id: user.id,
           email: user.email,
-          name: user.name,
+          username: user.username,
           role: user.role,
         };
       },
@@ -63,13 +64,13 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       const dbUser = await db.user.findFirst({
         where: {
-          username: token.username,
+          email: token.email,
         },
       });
 
       if (!dbUser) {
         if (user) {
-          token.id = user?.id;
+          token.id = user.id;
         }
         return token;
       }
