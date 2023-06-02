@@ -104,7 +104,7 @@ export default function Hero() {
                 })}
                 <li>
                   <Link
-                    href="/auth/signin"
+                    href="api/auth/signin"
                     className="flex items-center justify-center gap-x-1 py-2 px-4 text-white hover:text-black active:text-slate-800 font-medium border bg-transparent hover:bg-slate-100 active:bg-gray-400 duration-150 rounded-full md:inline-flex"
                   >
                     Login
