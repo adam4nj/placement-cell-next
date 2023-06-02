@@ -4,22 +4,10 @@ import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import JobCard, { Job } from "@/components/jobCard";
 import { Separator } from "@/components/ui/separator";
+import { Card } from "@/components/ui/card";
 
-import { LocateIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-import Link from "next/link";
-
-const JobsPage = async () => {
-  const jobs = [
+const InternshipPage = async () => {
+  const internships = [
     {
       id: "1",
       title: "title 1",
@@ -63,7 +51,7 @@ const JobsPage = async () => {
       createdAt: "Posted 2 days ago",
     },
   ];
-  //const jobs = await db.job.findMany();
+  //const internships = await db.job.findMany();
   const session = await getServerSession(authOptions);
 
   if (!session) redirect("/api/auth/signin");
@@ -73,44 +61,21 @@ const JobsPage = async () => {
       {JSON.stringify(session)}
       <div className="flex flex-col lg:divide-x lg:flex-row">
         <div className="container md:w-5/6 lg:w-3/4 space-y-3">
-          <div className="text-3xl p-3 text-start">Job Postings</div>
-          {jobs.length ? (
+          <div className="text-3xl p-3 text-start">Internships</div>
+          {internships.length ? (
             <ul className="grid grid-rows-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {jobs.map((job) => (
-                <li key={job.id}>
-                  <Card className="shadow hover:bg-gray-100 sm:py-3">
-                    <CardHeader className="flex m-auto sm:flex-col md:flex-row lg:flex-col">
-                      <div className="flex-auto justify-between py-3 md:py-0 lg:py-2">
-                        <CardTitle className="text-md sm:text-lg">
-                          {job.title}
-                        </CardTitle>
-                        <CardDescription className="text-sm sm:text-md">
-                          {job.details}
-                        </CardDescription>
-                      </div>
-                      <Link href={`/jobs/${job.id}`}>
-                        <Button className="w-1/2 md:w-auto lg:py-0.5 text-xs md:text-sm">
-                          Apply
-                        </Button>
-                      </Link>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex space-x-4 text-sm text-muted-foreground">
-                        <div className="flex items-center text-xs sm:text-sm">
-                          <LocateIcon className="mr-1 h-3 w-3" />
-                          {job.location}
-                        </div>
-                        <div className="text-xs sm:text-sm">
-                          {job.createdAt}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </li>
+              {internships.map((job) => (
+                <JobCard
+                  id={job.id}
+                  title={job.title}
+                  details={job.details}
+                  location={job.location}
+                  createdAt={job.createdAt}
+                />
               ))}
             </ul>
           ) : (
-            <p> your job list is empty</p>
+            <p> your internship list is empty</p>
           )}
         </div>
 
@@ -148,4 +113,4 @@ const JobsPage = async () => {
   );
 };
 
-export default JobsPage;
+export default InternshipPage;
