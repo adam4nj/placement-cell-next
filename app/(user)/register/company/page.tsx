@@ -1,10 +1,16 @@
 "use client";
 
+import { signIn, useSession } from "next-auth/react";
+
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import {
   registerFormSchema,
   RegisterFormType,
 } from "@/lib/validators/register";
+import { registerCompanyAction } from "@/actions/user";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,16 +33,14 @@ import {
 } from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import axios from "axios";
+
+import { experimental_useFormStatus as useFormStatus } from "react-dom";
 
 // 2. Define a submit handler.
-function onSubmit(values: RegisterFormType) {
+async function onSubmit(values: RegisterFormType) {
   console.log(values);
-  axios
-    .post("/api/register", values)
-    .then(() => alert("User has been registered"))
-    .catch(() => alert("An error has occurred"));
+  await registerCompanyAction(values);
+  signIn();
 }
 
 const CompanyRegisterPage = () => {
@@ -50,6 +54,16 @@ const CompanyRegisterPage = () => {
       confirmPassword: "",
     },
   });
+
+  const { status } = useSession();
+  const { pending } = useFormStatus();
+
+  useEffect(() => {
+    if (status === "authenticated") {
+      signIn();
+    }
+  }, [status]);
+
   return (
     <div>
       <Card className="w-[400px] md:w-[800px] m-auto py-5 items-center justify-center align-middle">
@@ -127,7 +141,15 @@ const CompanyRegisterPage = () => {
               />
             </CardContent>
             <CardFooter>
-              <Button type="submit" className="w-1/3 m-auto">
+              <Button
+                type="submit"
+                className={
+                  pending
+                    ? "bg-slate-500 w-1/3 m-auto"
+                    : "bg-slate-900 w-1/3 m-auto"
+                }
+                disabled={pending}
+              >
                 Submit
               </Button>
             </CardFooter>

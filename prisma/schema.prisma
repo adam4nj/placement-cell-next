@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -54,19 +51,21 @@ enum Status {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  name          String?
-  username      String         @unique
-  password      String
-  email         String?        @unique
-  emailVerified DateTime       @default(now())
-  image         String?
-  role          UserType
-  accounts      Account[]
-  sessions      Session[]
-  Notification  Notification[]
-  Student       Student[]
-  Company       Company[]
+  id             String           @id @default(cuid())
+  name           String?
+  username       String           @unique
+  password       String
+  email          String?          @unique
+  emailVerified  DateTime         @default(now())
+  image          String?
+  role           UserType
+  status         Status           @default(Pending)
+  accounts       Account[]
+  sessions       Session[]
+  notification   Notification[]
+  student        Student[]
+  company        Company[]
+  JobApplication JobApplication[]
 }
 
 model VerificationToken {
@@ -80,11 +79,11 @@ model VerificationToken {
 model Company {
   companyId   String       @id @default(cuid())
   companyName String
-  address     String       @db.VarChar(255)
+  email       String
+  address     String?      @db.Text
   status      Status
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
-  Job         Job[]
   Internship  Internship[]
 
   @@index([userId])
@@ -94,6 +93,8 @@ model Student {
   studentId String     @id @default(cuid())
   fName     String
   lName     String?
+  email     String
+  regId     String     @unique
   status    Status
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
@@ -103,16 +104,25 @@ model Student {
 }
 
 model Job {
-  jobId     String   @id @default(cuid())
-  title     String
-  location  String?
-  salary    Int?
-  createdAt DateTime @default(now())
-  details   String?  @db.VarChar(255)
-  company   Company  @relation(fields: [companyId], references: [companyId], onDelete: Cascade)
-  companyId String
+  jobId          String           @id @default(cuid())
+  title          String
+  location       String?
+  salary         Int?
+  createdAt      DateTime         @default(now())
+  details        String?          @db.Text
+  JobApplication JobApplication[]
+}
 
-  @@index([companyId])
+model JobApplication {
+  jobAppId  String   @id @default(cuid())
+  appliedAt DateTime @default(now())
+  job       Job      @relation(fields: [jobId], references: [jobId], onDelete: Cascade)
+  jobId     String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+
+  @@index([jobId])
+  @@index([userId])
 }
 
 model Internship {
@@ -121,7 +131,7 @@ model Internship {
   location     String?
   salary       Int?
   createdAt    DateTime @default(now())
-  details      String?  @db.VarChar(255)
+  details      String?  @db.Text
   company      Company  @relation(fields: [companyId], references: [companyId], onDelete: Cascade)
   companyId    String
 
@@ -132,7 +142,7 @@ model Feedback {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   subject   String
-  feedback  String?  @db.VarChar(255)
+  feedback  String?  @db.Text
   rating    Int
   student   Student  @relation(fields: [studentId], references: [studentId], onDelete: Cascade)
   studentId String
@@ -144,7 +154,8 @@ model Notification {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   title     String
-  content   String?  @db.VarChar(255)
+  content   String?  @db.Text
+  link      String?
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
 

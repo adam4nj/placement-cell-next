@@ -1,14 +1,13 @@
-import Footer from "@/components/Footer"
-import Hero from "@/components/Hero"
+import Footer from "@/components/Footer";
+import Hero from "@/components/Hero";
 
-
-const Home = () => {
+const Home = async () => {
   return (
     <div>
-        <Hero />
-        <Footer />
+      <Hero />
+      <Footer />
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

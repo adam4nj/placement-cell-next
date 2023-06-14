@@ -1,14 +1,24 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { redirect } from "next/navigation";
-
-const JobsPage = async () => {
+import { db } from "@/lib/db";
+import { DataTable } from "@/components/dataTable";
+import { User, columns } from "./columns";
+const AdminPage = async () => {
   //const jobs = await db.job.findMany();
   const session = await getServerSession(authOptions);
 
-  if (!session || session.user.role !== "ADMIN") redirect("api/auth/signin");
+  if (!session || session.user.role !== "STUDENT") redirect("/api/auth/signin");
 
-  return JSON.stringify(session);
+  const userData = await db.user.findMany();
+
+  return (
+    <>
+      <div className="container w-full` mx-auto py-10">
+        <DataTable columns={columns} data={userData} />
+      </div>
+    </>
+  );
 };
 
-export default JobsPage;
+export default AdminPage;

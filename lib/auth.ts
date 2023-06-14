@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { compare } from "bcrypt";
-import { NextAuthOptions } from "next-auth";
+import * as bcrypt from "bcrypt";
+import { type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { Adapter } from "next-auth/adapters";
 
@@ -35,7 +35,10 @@ export const authOptions: NextAuthOptions = {
           },
         });
         if (!user) return null;
-        const isValidPassword = compare(credentials.password, user.password);
+        const isValidPassword = bcrypt.compare(
+          credentials.password,
+          user.password
+        );
         if (!isValidPassword) return null;
 
         return {

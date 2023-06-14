@@ -1,5 +1,7 @@
-"use client";
 import { useSession, signIn, signOut } from "next-auth/react";
+import Image from "next/image";
+import { Button } from "./ui/button";
+import profileIcon from "@/public/assets/profile.svg";
 
 export default function SignInButton() {
   const { data: session } = useSession();
@@ -7,24 +9,28 @@ export default function SignInButton() {
   if (session && session.user) {
     return (
       <>
-        Signed in as {session?.user?.email} <br />
-        <button
-          onClick={() => signOut()}
-          className="px-4 py-2 text-white bg-gray-600 rounded-md shadow hover:bg-gray-800"
-        >
-          Sign Out
-        </button>
+        <div className="flex flex-row space-x-4 m-auto align-middle">
+          <p className="mt-3 text-center text-sm font-medium align-middle">
+            {session?.user?.username}
+          </p>
+          <Button
+            onClick={() => signOut()}
+            className="text-sm text-white bg-gray-600 rounded-xl shadow hover:bg-gray-800"
+          >
+            Sign Out
+          </Button>
+        </div>
       </>
     );
   }
   return (
     <>
-      <button
+      <Button
         onClick={() => signIn()}
-        className="px-4 py-2 text-white bg-gray-600 rounded-md shadow hover:bg-gray-800"
+        className="text-sm text-white bg-gray-600 rounded-xl shadow hover:bg-gray-800"
       >
-        Sign in
-      </button>
+        Sign In
+      </Button>
     </>
   );
 }

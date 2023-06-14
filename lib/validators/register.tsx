@@ -2,6 +2,7 @@ import * as z from "zod";
 
 export const registerFormSchema = z
   .object({
+    name: z.string().min(1, { message: "Name is required" }),
     role: z.enum(["STUDENT", "COMPANY"]),
     email: z
       .string()
@@ -23,3 +24,12 @@ export const registerFormSchema = z
   });
 
 export type RegisterFormType = z.infer<typeof registerFormSchema>;
+
+export const firstName = z
+  .string()
+  .transform((val) => val.split(" ")[0])
+  .pipe(z.string().trim());
+export const lastName = z
+  .string()
+  .transform((val) => val.split(" ")[1])
+  .pipe(z.string().trim());
