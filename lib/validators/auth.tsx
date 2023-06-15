@@ -33,3 +33,16 @@ export const lastName = z
   .string()
   .transform((val) => val.split(" ")[1])
   .pipe(z.string().trim());
+
+export const loginFormSchema = z.object({
+  role: z.enum(["STUDENT", "COMPANY"]),
+
+  username: z.string().min(8, {
+    message: "Username must be at least 8 characters.",
+  }),
+  password: z.string().min(8, {
+    message: "Password must be at least 8 characters.",
+  }),
+});
+
+export type LoginFormType = z.infer<typeof loginFormSchema>;

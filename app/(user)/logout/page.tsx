@@ -12,37 +12,28 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { TrashIcon } from "lucide-react";
-import { deleteJob } from "@/actions/jobs";
+import { signOut } from "next-auth/react";
 
-type DeleteJobProps = {
-  jobId: string;
-  title: string;
-};
-
-const DeleteJobButton = ({ jobId, title }: DeleteJobProps) => {
+const SignOutButton = () => {
   return (
     <div>
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <Button variant="ghost" className="h-8 w-8 p-0">
-            <span className="sr-only">Delete Job</span>
-            <TrashIcon className="h-4 w-4" />
+          <Button className="text-sm text-white bg-gray-600 rounded-xl shadow hover:bg-gray-800">
+            Sign Out
           </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>Log Out</AlertDialogTitle>
             <AlertDialogDescription className="space-y-2">
-              This action cannot be undone. This will permanently delete the job
-              <span className="flex font-bold text-base px-1">{title}</span>
-              from our servers.
+              You can log out from the application
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => deleteJob(jobId)}>
-              Delete Job
+            <AlertDialogAction onClick={() => signOut()}>
+              Log Out
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -51,4 +42,4 @@ const DeleteJobButton = ({ jobId, title }: DeleteJobProps) => {
   );
 };
 
-export default DeleteJobButton;
+export default SignOutButton;

@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { registerFormSchema } from "@/lib/validators/register";
+import { registerFormSchema } from "@/lib/validators/auth";
 import * as argon2 from "argon2";
 import { NextResponse } from "next/server";
 

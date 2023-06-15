@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { Status } from "@prisma/client";
-import { RegisterFormType } from "@/lib/validators/register";
+import { RegisterFormType } from "@/lib/validators/auth";
 import { registerCompany, registerStudent } from "@/lib/user";
 
 export async function registerStudentAction(body: RegisterFormType) {

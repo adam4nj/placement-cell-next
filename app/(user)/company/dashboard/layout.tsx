@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 const sidebarNavItems = [
   {
     title: "Jobs",
-    href: "/company/dashboard/jobs",
+    href: "/company/dashboard/job",
   },
   {
     title: "Internships",

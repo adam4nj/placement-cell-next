@@ -9,6 +9,8 @@ import {
   type Job,
   JobApplication,
   jobApplicationSchema,
+  NewJob,
+  newJobSchema,
 } from "@/lib/validators/job";
 import { db } from "@/lib/db";
 import {
@@ -29,8 +31,10 @@ export async function getCurrentJob(id: string) {
   return job;
 }
 
-export async function createJob(data: Job) {
-  const { title, location, salary, details } = await jobSchema.parseAsync(data);
+export async function createJob(data: NewJob) {
+  const { title, location, salary, details } = await newJobSchema.parseAsync(
+    data
+  );
   const job = await db.job.create({
     data: {
       title,
@@ -39,7 +43,7 @@ export async function createJob(data: Job) {
       details,
     },
   });
-  revalidatePath("/company/dashboard/jobs");
+  revalidatePath("/company/dashboard/job");
 
   return { job };
 }
@@ -59,14 +63,14 @@ export async function editJob(data: Job) {
     },
   });
 
-  revalidatePath("/company/dashboard/jobs");
+  revalidatePath("/company/dashboard/job");
 
   return job;
 }
 
 export async function deleteJob(id: string) {
   await deleteJobFromDb(id);
-  revalidatePath("/company/dashboard/jobs");
+  revalidatePath("/company/dashboard/job");
 }
 
 export async function applyJob(id: string) {

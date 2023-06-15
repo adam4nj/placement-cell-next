@@ -6,7 +6,7 @@ import {
   lastName,
   registerFormSchema,
   RegisterFormType,
-} from "@/lib/validators/register";
+} from "@/lib/validators/auth";
 import * as bcrypt from "bcrypt";
 import { UniqueErrorAlert } from "@/components/uniqueError";
 

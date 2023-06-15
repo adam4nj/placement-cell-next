@@ -5,10 +5,7 @@ import { experimental_useFormStatus as useFormStatus } from "react-dom";
 import { signIn, useSession } from "next-auth/react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  registerFormSchema,
-  RegisterFormType,
-} from "@/lib/validators/register";
+import { registerFormSchema, RegisterFormType } from "@/lib/validators/auth";
 
 import { Button } from "@/components/ui/button";
 import {
