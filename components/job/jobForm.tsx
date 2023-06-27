@@ -1,12 +1,14 @@
 "use client";
 
-import Link from "next/link";
+import { CalendarIcon } from "@radix-ui/react-icons";
+import { format } from "date-fns";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { jobSchema, Job } from "@/lib/validators/job";
-import { Separator } from "@/components/ui/separator";
+import { NewJob, newJobSchema } from "@/lib/validators/job";
 import { z } from "zod";
 
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Form,
   FormControl,
@@ -16,25 +18,66 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
-import { createJob } from "@/actions/jobs";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { usePathname, useRouter } from "next/navigation";
+import { toast } from "@/components/ui/use-toast";
 
-async function onSubmit(values: Job) {
-  console.log(values);
-  await createJob(values);
-}
+const JobForm = () => {
+  const router = useRouter();
+  const pathname = usePathname();
 
-export default function JobForm() {
-  const form = useForm<z.infer<typeof jobSchema>>({
-    resolver: zodResolver(jobSchema),
+  const form = useForm<z.infer<typeof newJobSchema>>({
+    resolver: zodResolver(newJobSchema),
     defaultValues: {
       title: "",
       location: "",
       details: "",
+      salary: 0,
     },
   });
+
+  const { mutate: createJob } = useMutation({
+    mutationFn: async ({ title, location, salary, details, date }: NewJob) => {
+      const payload: NewJob = { title, location, salary, details, date };
+      const { data } = await axios.post("/api/jobs/create", payload);
+      return data;
+    },
+    onError: () => {
+      return toast({
+        title: "Something went wrong.",
+        description: "Your job was not published. Please try again.",
+        variant: "destructive",
+      });
+    },
+    onSuccess: () => {
+      //not working
+      //const newPathname = pathname.split("/").slice(0, -1).join("/");
+      //router.push(newPathname);
+
+      //router.refresh();
+
+      router.back();
+
+      return toast({
+        description: "Your post has been published.",
+      });
+    },
+  });
+
+  async function onSubmit(values: NewJob) {
+    form.reset();
+    createJob(values);
+  }
 
   return (
     <div className="space-y-6">
@@ -48,7 +91,7 @@ export default function JobForm() {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="p-5 grid grid-cols-2 gap-4"
+            className="flex flex-col gap-4"
           >
             <FormField
               control={form.control}
@@ -63,32 +106,82 @@ export default function JobForm() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="location"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Location</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="salary"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Salary</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="location"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Location</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="salary"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Salary</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Expected salary" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Date</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            id="date"
+                            variant={"outline"}
+                            className={cn(
+                              "w-[300px] justify-start text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value?.from ? (
+                              field.value.to ? (
+                                <>
+                                  {format(field.value.from, "LLL dd, y")} -{" "}
+                                  {format(field.value.to, "LLL dd, y")}
+                                </>
+                              ) : (
+                                format(field.value.from, "LLL dd, y")
+                              )
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          initialFocus
+                          mode="range"
+                          defaultMonth={field.value?.from}
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          numberOfMonths={2}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={form.control}
               name="details"
@@ -109,11 +202,7 @@ export default function JobForm() {
                 </FormItem>
               )}
             />
-            <Button
-              type="submit"
-              className="items-center justify-center"
-              onClick={() => form.reset}
-            >
+            <Button type="submit" className="items-center justify-center">
               Submit
             </Button>
           </form>
@@ -121,4 +210,6 @@ export default function JobForm() {
       </div>
     </div>
   );
-}
+};
+
+export default JobForm;

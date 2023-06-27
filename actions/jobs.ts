@@ -1,57 +1,45 @@
 "use server";
 
-import { cookies } from "next/headers";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
+import { getUser } from "@/lib/auth";
 
-import {
-  jobSchema,
-  type Job,
-  JobApplication,
-  jobApplicationSchema,
-  NewJob,
-  newJobSchema,
-} from "@/lib/validators/job";
+import { jobSchema, type Job } from "@/lib/validators/job";
 import { db } from "@/lib/db";
-import {
-  deleteJobFromDb,
-  getJobFromDb,
-  getJobsFrmDb,
-  createJobApplication,
-} from "@/lib/job";
+import { deleteJobFromDb, createJobApplication } from "@/lib/job";
 import { revalidatePath } from "next/cache";
 
 export async function getAllJobs() {
-  const jobs = await getJobsFrmDb();
-  return jobs;
+  const allJobs = await db.job.findMany({
+    include: {
+      company: true,
+    },
+  });
+  return allJobs;
 }
 
 export async function getCurrentJob(id: string) {
-  const job = await getJobFromDb(id);
-  return job;
-}
-
-export async function createJob(data: NewJob) {
-  const { title, location, salary, details } = await newJobSchema.parseAsync(
-    data
-  );
-  const job = await db.job.create({
-    data: {
-      title,
-      location,
-      salary,
-      details,
+  const currentJob = await db.job.findUnique({
+    where: {
+      jobId: id,
+    },
+    include: {
+      company: true,
     },
   });
-  revalidatePath("/company/dashboard/job");
+  return currentJob;
+}
 
-  return { job };
+export async function getStudent(id?: string) {
+  const student = await db.student.findUnique({
+    where: {
+      userId: id,
+    },
+  });
+  return student;
 }
 
 export async function editJob(data: Job) {
-  const { jobId, title, location, salary, details } =
-    await jobSchema.parseAsync(data);
-  const job = db.job.update({
+  const { jobId, title, location, salary, details } = jobSchema.parse(data);
+  const job = await db.job.update({
     where: {
       jobId: jobId,
     },
@@ -74,7 +62,7 @@ export async function deleteJob(id: string) {
 }
 
 export async function applyJob(id: string) {
-  const session = await getServerSession(authOptions);
+  const session = await getUser();
   const userId = session?.user.id;
   if (userId) {
     const applyJob = await createJobApplication(id, userId);
