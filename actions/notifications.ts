@@ -1,12 +1,9 @@
-"use server";
-
 import { db } from "@/lib/db";
-import { cookies } from "next/headers";
-import { addNotification, getAllNotifications } from "@/lib/notifications";
+import { addNotification } from "@/lib/notifications";
 import { revalidatePath } from "next/cache";
 
-export async function getAll() {
-  const notifications = await getAllNotifications();
+export async function getAllNotifications() {
+  const notifications = await db.notification.findMany();
   return notifications;
 }
 

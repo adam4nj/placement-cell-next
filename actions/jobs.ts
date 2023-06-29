@@ -1,11 +1,10 @@
 "use server";
 
-import { getUser } from "@/lib/auth";
-
 import { jobSchema, type Job } from "@/lib/validators/job";
 import { db } from "@/lib/db";
-import { deleteJobFromDb, createJobApplication } from "@/lib/job";
+import { deleteJobFromDb } from "@/lib/job";
 import { revalidatePath } from "next/cache";
+import { jobApplicationSchema } from "@/lib/validators/job-application";
 
 export async function getAllJobs() {
   const allJobs = await db.job.findMany({
@@ -61,11 +60,45 @@ export async function deleteJob(id: string) {
   revalidatePath("/company/dashboard/job");
 }
 
-export async function applyJob(id: string) {
-  const session = await getUser();
-  const userId = session?.user.id;
-  if (userId) {
-    const applyJob = await createJobApplication(id, userId);
-    return applyJob;
-  }
-}
+export const isApplied = async (id: string, userId: string) => {
+  const hasApplied = await db.jobApplication.findFirst({
+    where: {
+      jobId: id,
+      student: {
+        userId: userId,
+      },
+    },
+  });
+  revalidatePath("/jobs/[jobId]");
+  return !!hasApplied;
+};
+
+export const getStudentJobs = async (userId: string) => {
+  const appliedJobs = await db.jobApplication.findMany({
+    where: {
+      student: {
+        userId: userId,
+      },
+    },
+    include: {
+      job: {
+        include: {
+          company: true,
+        },
+      },
+    },
+  });
+
+  return appliedJobs;
+};
+
+export const editJobApplication = async () => {};
+
+export const deleteJobApplication = async (id: string) => {
+  const deletejob = db.jobApplication.delete({
+    where: {
+      jobAppId: id,
+    },
+  });
+  return deletejob;
+};

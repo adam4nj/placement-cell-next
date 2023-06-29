@@ -50,22 +50,26 @@ enum Status {
   Pending
 }
 
+enum JobType {
+  Job
+  Internship
+}
+
 model User {
-  id             String           @id @default(cuid())
-  name           String?
-  username       String           @unique
-  password       String
-  email          String?          @unique
-  emailVerified  DateTime         @default(now())
-  image          String?
-  role           UserType
-  status         Status           @default(Pending)
-  accounts       Account[]
-  sessions       Session[]
-  notification   Notification[]
-  student        Student[]
-  company        Company[]
-  JobApplication JobApplication[]
+  id            String         @id @default(cuid())
+  name          String?
+  username      String         @unique
+  password      String
+  email         String?        @unique
+  emailVerified DateTime       @default(now())
+  image         String?
+  role          UserType
+  status        Status         @default(Pending)
+  accounts      Account[]
+  sessions      Session[]
+  notification  Notification[]
+  student       Student?
+  company       Company?
 }
 
 model VerificationToken {
@@ -77,40 +81,50 @@ model VerificationToken {
 }
 
 model Company {
-  companyId   String       @id @default(cuid())
+  companyId   String  @id @default(cuid())
   companyName String
   email       String
-  address     String?      @db.Text
+  address     String? @db.Text
   status      Status
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String
-  Internship  Internship[]
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String  @unique
+  Job         Job[]
 
   @@index([userId])
 }
 
 model Student {
-  studentId String     @id @default(cuid())
-  fName     String
-  lName     String?
-  email     String
-  regId     String     @unique
-  status    Status
-  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
-  Feedback  Feedback[]
+  studentId         String              @id @default(cuid())
+  fName             String
+  lName             String?
+  email             String
+  regId             String              @unique
+  status            Status
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String              @unique
+  Feedback          Feedback[]
+  JobApplication    JobApplication[]
+  InternApplication InternApplication[]
 
   @@index([userId])
 }
 
 model Job {
-  jobId          String           @id @default(cuid())
-  title          String
-  location       String?
-  salary         Int?
-  createdAt      DateTime         @default(now())
-  details        String?          @db.Text
-  JobApplication JobApplication[]
+  jobId             String              @id @default(cuid())
+  title             String
+  location          String?
+  salary            Int?
+  type              JobType             @default(Job)
+  startDate         DateTime?           @db.Date
+  endDate           DateTime?           @db.Date
+  createdAt         DateTime            @default(now())
+  details           String?             @db.Text
+  company           Company             @relation(fields: [companyId], references: [companyId], onDelete: Cascade)
+  companyId         String
+  JobApplication    JobApplication[]
+  InternApplication InternApplication[]
+
+  @@index([companyId])
 }
 
 model JobApplication {
@@ -118,24 +132,30 @@ model JobApplication {
   appliedAt DateTime @default(now())
   job       Job      @relation(fields: [jobId], references: [jobId], onDelete: Cascade)
   jobId     String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId    String
+  resume    String?
+  status    Status   @default(Pending)
+  createdAt DateTime @default(now())
+  student   Student? @relation(fields: [studentId], references: [studentId])
+  studentId String?
 
   @@index([jobId])
-  @@index([userId])
+  @@index([studentId])
 }
 
-model Internship {
-  internshipId String   @id @default(cuid())
-  title        String
-  location     String?
-  salary       Int?
-  createdAt    DateTime @default(now())
-  details      String?  @db.Text
-  company      Company  @relation(fields: [companyId], references: [companyId], onDelete: Cascade)
-  companyId    String
+model InternApplication {
+  internAppId String   @id @default(cuid())
+  appliedAt   DateTime @default(now())
+  job         Job      @relation(fields: [jobId], references: [jobId], onDelete: Cascade)
+  jobId       String
+  resume      String?
+  status      Status
+  createdAt   DateTime @default(now())
+  paymentId   String?
+  student     Student? @relation(fields: [studentId], references: [studentId])
+  studentId   String?
 
-  @@index([companyId])
+  @@index([jobId])
+  @@index([studentId])
 }
 
 model Feedback {

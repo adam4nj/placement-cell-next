@@ -82,7 +82,7 @@ const CompanyRegisterPage = () => {
                       <Input placeholder="Your Username" {...field} />
                     </FormControl>
                     <FormDescription>
-                      This is your company's public display name.
+                      This is your companys public display name.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -98,7 +98,7 @@ const CompanyRegisterPage = () => {
                       <Input placeholder="Your Work Email" {...field} />
                     </FormControl>
                     <FormDescription>
-                      This is your organization's email id.
+                      This is your organizations email id.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>

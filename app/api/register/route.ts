@@ -1,6 +1,5 @@
 import { db } from "@/lib/db";
 import { registerFormSchema } from "@/lib/validators/auth";
-import * as argon2 from "argon2";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
@@ -18,14 +17,12 @@ export async function POST(req: Request) {
     throw new Error("Email already exists");
   }
 
-  const hashedPassword = await argon2.hash(password);
-
   const user = await db.user.create({
     data: {
       role,
       email,
       username,
-      password: hashedPassword,
+      password,
     },
   });
 

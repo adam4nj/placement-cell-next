@@ -22,10 +22,3 @@ export const newJobSchema = z.object({
 });
 
 export type NewJob = z.infer<typeof newJobSchema>;
-
-export const jobApplicationSchema = z.object({
-  jobId: z.string(),
-  studentId: z.string(),
-});
-
-export type JobApplicationType = z.infer<typeof jobApplicationSchema>;

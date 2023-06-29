@@ -37,7 +37,7 @@ export default function EditNotifButton({
         <DialogHeader>
           <DialogTitle>Edit Notification</DialogTitle>
           <DialogDescription>
-            Make changes to your notification here. Click save when you're done.
+            Make changes to your notification here. Click save when youre done.
           </DialogDescription>
         </DialogHeader>
         <form action={() => editOne(id, title, content, link)}>

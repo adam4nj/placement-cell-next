@@ -30,7 +30,7 @@ export function AddJob() {
       <DropdownMenuContent>
         <DropdownMenuLabel>Add New</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link href="/company/dashboard/job/add-job">
+        <Link href="/company/dashboard/jobs/addjob">
           <DropdownMenuItem>Job</DropdownMenuItem>
         </Link>
         <Link href="/company/dashboard/internships/add-internship">

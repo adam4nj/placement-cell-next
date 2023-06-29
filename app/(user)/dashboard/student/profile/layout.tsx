@@ -54,25 +54,6 @@ export default function ProfileLayout({ children }: ProfileLayoutProps) {
   return (
     <>
       <div className="hidden px-5 py-3 pb-16 md:block space-y-5">
-        <Sheet>
-          <SheetTrigger asChild>
-            <button className="mx-auto items-start justify-start">
-              <MenuIcon className="w-4 h-4" />
-            </button>
-          </SheetTrigger>
-          <SheetContent position="left" size="sm">
-            <SheetHeader>
-              <SheetTitle>Edit profile</SheetTitle>
-            </SheetHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-4 items-center gap-4">Profile</div>
-              <div className="grid grid-cols-4 items-center gap-4">Logout</div>
-            </div>
-            <SheetFooter>
-              <SheetClose asChild>x </SheetClose>
-            </SheetFooter>
-          </SheetContent>
-        </Sheet>
         <div className="flex flex-col px-10 space-y-6 lg:flex-row lg:space-x-12 lg:space-y-0">
           <div className="w-full">
             <div className="flex flex-row justify-between">
@@ -82,17 +63,6 @@ export default function ProfileLayout({ children }: ProfileLayoutProps) {
                   Manage your account settings and set e-mail preferences.
                 </p>
               </div>
-
-              <Card className="w-fit flex flex-row p-7 rounded-xl">
-                <Avatar className="w-20 h-20">
-                  <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-                <div className="flex flex-col p-3">
-                  <h2 className="text-lg font-semibold">Full Name</h2>
-                  <p>User name</p>
-                </div>
-              </Card>
             </div>
 
             <Separator className="my-6" />

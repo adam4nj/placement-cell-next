@@ -8,13 +8,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { getAll } from "@/actions/notifications";
+import { getAllNotifications } from "@/actions/notifications";
 import Link from "next/link";
 import EditNotifButton from "@/components/notification/editNotifButton";
 import DeleteNotifButton from "@/components/notification/deleteNotifButton";
 
 const NotificationsData = async () => {
-  const notifications = await getAll();
+  const notifications = await getAllNotifications();
   return (
     <div>
       Notifications
@@ -34,7 +34,7 @@ const NotificationsData = async () => {
             <TableRow></TableRow>
           ) : (
             notifications.map((item) => (
-              <TableRow>
+              <TableRow key={item.id}>
                 <TableCell className="font-medium">{item.id}</TableCell>
                 <TableCell>
                   <b>{item.title}</b>

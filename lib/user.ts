@@ -1,5 +1,4 @@
 import { db } from "@/lib/db";
-import { Prisma } from "@prisma/client";
 
 import {
   firstName,
@@ -7,8 +6,6 @@ import {
   registerFormSchema,
   RegisterFormType,
 } from "@/lib/validators/auth";
-import * as bcrypt from "bcrypt";
-import { UniqueErrorAlert } from "@/components/uniqueError";
 
 export const registerStudent = async (body: RegisterFormType) => {
   const { name, role, email, username, password } =
@@ -28,15 +25,13 @@ export const registerStudent = async (body: RegisterFormType) => {
     throw new Error("Email already exists");
   }
 
-  const hashedPassword = await bcrypt.hash(password, 12);
-
   try {
     const studentUser = await db.user.create({
       data: {
         role,
         email,
         username,
-        password: hashedPassword,
+        password,
         student: {
           create: {
             fName: parsedFirstName,
@@ -50,14 +45,6 @@ export const registerStudent = async (body: RegisterFormType) => {
     });
     return studentUser;
   } catch (e) {
-    if (e instanceof Prisma.PrismaClientKnownRequestError) {
-      if (e.code === "P2002") {
-        console.log(
-          "There is a unique constraint violation, a new user cannot be created with this email"
-        );
-        <UniqueErrorAlert />;
-      }
-    }
     throw e;
   }
 };
@@ -76,14 +63,12 @@ export const registerCompany = async (body: RegisterFormType) => {
     throw new Error("Email already exists");
   }
 
-  const hashedPassword = await bcrypt.hash(password, 12);
-
   const companyUser = await db.user.create({
     data: {
       role,
       email,
       username,
-      password: hashedPassword,
+      password,
       company: {
         create: {
           companyName: name,
@@ -94,5 +79,5 @@ export const registerCompany = async (body: RegisterFormType) => {
     },
   });
 
-  return { companyUser };
+  return companyUser;
 };

@@ -1,14 +1,20 @@
-"use client";
-
-import { applyJob } from "@/actions/jobs";
+import { isApplied } from "@/actions/jobs";
 import { Button } from "../ui/button";
 
 type Props = {
   jobId: string;
 };
 
-const ApplyJobButton = ({ jobId }: Props) => {
-  return <Button onClick={() => applyJob(jobId)}>Apply</Button>;
+const ApplyJobButton = async ({ jobId }: Props) => {
+  return (
+    <>
+      {(await isApplied(jobId)) ? (
+        <Button>Apply</Button>
+      ) : (
+        <Button>Applied</Button>
+      )}
+    </>
+  );
 };
 
 export default ApplyJobButton;

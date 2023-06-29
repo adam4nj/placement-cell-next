@@ -1,7 +1,5 @@
 "use client";
 
-import { experimental_useFormStatus as useFormStatus } from "react-dom";
-
 import { signIn } from "next-auth/react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,16 +35,11 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
-import { useEffect } from "react";
-import { Router, useRouter } from "next/router";
-
-const router = useRouter();
 
 // 2. Define a submit handler.
 async function onSubmit(values: LoginFormType) {
   console.log(values);
   signIn("credentials", values);
-  router.push("/");
 }
 
 const StudentLoginPage = () => {
@@ -58,8 +51,6 @@ const StudentLoginPage = () => {
       password: "",
     },
   });
-
-  const { pending } = useFormStatus();
 
   return (
     <Card className="w-[400px] md:w-[500px] m-auto py-5 items-center justify-center align-middle">
@@ -77,10 +68,7 @@ const StudentLoginPage = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Role</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select your role" />
@@ -131,11 +119,7 @@ const StudentLoginPage = () => {
             />
           </CardContent>
           <CardFooter>
-            <Button
-              type="submit"
-              className={pending ? "bg-slate-500 w-1/3 m-auto" : "w-1/3 m-auto"}
-              disabled={pending}
-            >
+            <Button type="submit" className="w-1/3 m-auto">
               Login
             </Button>
           </CardFooter>

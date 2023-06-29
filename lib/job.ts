@@ -1,6 +1,7 @@
 import { db } from "./db";
 import { Job } from "@/lib/validators/job";
 import { cache } from "react";
+import { getUser } from "./auth";
 
 export const preloadJobs = () => {
   void getJobsFrmDb();
@@ -27,15 +28,4 @@ export const deleteJobFromDb = async (id: string) => {
     },
   });
   return deletejob;
-};
-
-export const createJobApplication = async (jobId: string, userId: string) => {
-  const jobapplication = await db.jobApplication.create({
-    data: {
-      jobId: jobId,
-      userId: userId,
-    },
-  });
-
-  return jobapplication;
 };

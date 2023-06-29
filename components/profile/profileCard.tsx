@@ -1,9 +1,9 @@
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useSession } from "next-auth/react";
+import { getUser } from "@/lib/auth";
 
-export function ProfileCard() {
-  const { data: session } = useSession();
+export async function ProfileCard() {
+  const session = await getUser();
   return (
     <Card className="w-fit flex flex-row p-7 rounded-xl">
       {!session?.user && !session?.user.name ? (
@@ -17,8 +17,12 @@ export function ProfileCard() {
         </Avatar>
       )}
       <div className="flex flex-col p-3">
-        <h2 className="text-lg font-semibold">{session?.user.name}</h2>
-        <p>{session?.user.username}</p>
+        <h2 className="text-lg font-semibold">
+          {session ? session.user.name : "Full Name"} /
+        </h2>
+        <p className="text-lg">
+          {session ? session.user.username : "Username"}
+        </p>
       </div>
     </Card>
   );

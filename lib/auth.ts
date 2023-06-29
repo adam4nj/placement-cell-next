@@ -1,7 +1,6 @@
 import { db } from "@/lib/db";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import * as bcrypt from "bcrypt";
-import { type NextAuthOptions } from "next-auth";
+import { getServerSession, type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { Adapter } from "next-auth/adapters";
 
@@ -38,10 +37,8 @@ export const authOptions: NextAuthOptions = {
           },
         });
         if (!user) return null;
-        const isValidPassword = bcrypt.compare(
-          credentials.password,
-          user.password
-        );
+        const isValidPassword = credentials.password === user.password;
+
         if (!isValidPassword) return null;
 
         return {
@@ -90,5 +87,10 @@ export const authOptions: NextAuthOptions = {
         role: dbUser.role,
       };
     },
+    redirect() {
+      return "/";
+    },
   },
 };
+
+export const getUser = async () => await getServerSession(authOptions);
