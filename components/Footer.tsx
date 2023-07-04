@@ -67,8 +67,8 @@ const Footer = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col md:flex-row justify-between mx-5">
-          <p className="text-xs text-gray-500 mb-5">
+        <div className="flex flex-col-reverse md:flex-row justify-between mx-5 gap-2">
+          <p className="text-xs text-gray-500">
             &copy; 2023. Placement Cell. All rights reserved.
           </p>
           <ul className="text-slate-100 text-sm flex flex-col md:flex-row md:mx-auto gap-10 justify-left md:justify-between">
