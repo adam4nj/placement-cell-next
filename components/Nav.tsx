@@ -26,8 +26,8 @@ export default function Navbar() {
       <a href="/">
         <Image
           src="assets/logo-light.svg"
-          width={110}
-          height={50}
+          width={130}
+          height={70}
           alt="Placement Cell Logo"
         />
       </a>
@@ -79,7 +79,7 @@ export default function Navbar() {
         <nav
           className={`pb-5 md:text-sm ${
             state
-              ? "absolute z-20 top-0 inset-x-0 bg-slate-100 rounded-xl mx-2 mt-2 md:mx-0 md:mt-0 md:relative md:bg-transparent border"
+              ? "absolute z-20 top-0 inset-x-0 bg-slate-100 rounded-xl mx-2 mt-2 md:mx-0 md:mt-0 md:relative md:bg-transparent border-slate-400 drop-shadow-lg"
               : ""
           }`}
         >

@@ -10,7 +10,7 @@ const JobFeed = async () => {
   if (!jobs) return notFound();
 
   return (
-    <ul className="flex flex-col col-span-2 space-y-6">
+    <ul className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {jobs.map((job, index) => {
         if (index === jobs.length - 1) {
           // Add a ref to the last post in the list
