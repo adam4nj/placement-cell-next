@@ -1,9 +1,11 @@
+"use client";
+
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { getUser } from "@/lib/auth";
+import { useSession } from "next-auth/react";
 
 export async function ProfileCard() {
-  const session = await getUser();
+  const { data: session } = useSession();
   return (
     <Card className="w-fit flex flex-row p-7 rounded-xl">
       {!session?.user && !session?.user.name ? (

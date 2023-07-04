@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 export const studentProfileSchema = z.object({
-  firstName: z.string(),
-  lastName: z.string(),
+  fName: z.string(),
+  lName: z.string(),
   email: z
     .string()
     .email("Invalid Email")

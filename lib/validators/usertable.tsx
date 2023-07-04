@@ -1,11 +1,5 @@
 import { z } from "zod";
 
-enum Status {
-  accepted = "Accepted",
-  pending = "Pending",
-  rejected = "Rejected",
-}
-
 export const userSchema = z.object({
   id: z.string(),
   name: z.string().nullable(),
@@ -14,7 +8,13 @@ export const userSchema = z.object({
   username: z.string().min(1, {
     message: "Username not found",
   }),
-  status: z.nativeEnum(Status),
+  status: z.enum(["Accepted", "Pending", "Rejected"]),
 });
 
 export type User = z.infer<typeof userSchema>;
+
+export const statusSchema = z.object({
+  status: z.enum(["Accepted", "Pending", "Rejected"]),
+});
+
+export type StatusType = z.infer<typeof statusSchema>;

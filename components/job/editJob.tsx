@@ -28,21 +28,15 @@ import { Textarea } from "../ui/textarea";
 import { editJob } from "@/actions/jobs";
 import { EditIcon } from "lucide-react";
 
-export function EditJobButton({
-  jobId,
-  title,
-  location,
-  salary,
-  details,
-}: Job) {
+export function EditJobButton({ job }: { job: Job }) {
   const form = useForm<Job>({
     resolver: zodResolver(jobSchema),
     defaultValues: {
-      jobId: jobId,
-      title: title,
-      location: location,
-      salary: salary,
-      details: details,
+      jobId: job.jobId,
+      title: job.title,
+      location: job.location,
+      salary: job.salary,
+      details: job.details,
     },
   });
 

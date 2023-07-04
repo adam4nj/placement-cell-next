@@ -10,6 +10,7 @@ export async function CompanyStats() {
       company: {
         userId: session?.user.id,
       },
+      type: "Job",
     },
   });
 
@@ -23,11 +24,12 @@ export async function CompanyStats() {
     },
   });
 
-  const internships = await db.internship.count({
+  const internships = await db.job.count({
     where: {
       company: {
         userId: session?.user.id,
       },
+      type: "Internship",
     },
   });
 

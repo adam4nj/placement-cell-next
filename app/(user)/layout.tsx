@@ -4,8 +4,8 @@ export default function UserLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      <div className="h-fit mx-5">{children}</div>
-    </>
+    <div>
+      <div className="h-fit">{children}</div>
+    </div>
   );
 }

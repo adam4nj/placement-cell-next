@@ -5,6 +5,8 @@ import { Status } from "@prisma/client";
 import { RegisterFormType } from "@/lib/validators/auth";
 import { registerCompany, registerStudent } from "@/lib/user";
 import * as bcrypt from "bcrypt";
+import { User } from "@/lib/validators/usertable";
+import { revalidatePath } from "next/cache";
 
 export async function bcryptHash(password: string) {
   const pw = await bcrypt.hash(password, 12);
@@ -24,15 +26,17 @@ export async function registerCompanyAction(body: RegisterFormType) {
   await registerCompany(body);
 }
 
-export async function changeStatus(input: RegisterFormType, status: Status) {
+export async function changeStatus(id: string, status: Status) {
   await db.user.update({
     where: {
-      email: input.email,
+      id,
     },
     data: {
       status: status,
     },
   });
 
-  return { input, status };
+  revalidatePath("/dashboard/admin/users");
+
+  return { id, status };
 }

@@ -14,7 +14,7 @@ export async function POST(req: Request) {
   });
 
   if (exists) {
-    throw new Error("Email already exists");
+    return new NextResponse("Email already exists");
   }
 
   const user = await db.user.create({

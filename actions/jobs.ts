@@ -1,10 +1,16 @@
 "use server";
 
 import { jobSchema, type Job } from "@/lib/validators/job";
+import { Prisma } from "@prisma/client";
 import { db } from "@/lib/db";
 import { deleteJobFromDb } from "@/lib/job";
 import { revalidatePath } from "next/cache";
-import { jobApplicationSchema } from "@/lib/validators/job-application";
+
+import { getUser } from "@/lib/auth";
+import {
+  StudentProfileType,
+  studentProfileSchema,
+} from "@/lib/validators/profile";
 
 export async function getAllJobs() {
   const allJobs = await db.job.findMany({
@@ -27,14 +33,18 @@ export async function getCurrentJob(id: string) {
   return currentJob;
 }
 
-export async function getStudent(id?: string) {
-  const student = await db.student.findUnique({
+export async function getStudent() {
+  const session = await getUser();
+
+  const student = await db.student.findFirst({
     where: {
-      userId: id,
+      userId: session?.user.id,
     },
   });
-  return student;
+  return student!;
 }
+
+export type StudentDBType = Prisma.PromiseReturnType<typeof getStudent>;
 
 export async function editJob(data: Job) {
   const { jobId, title, location, salary, details } = jobSchema.parse(data);
@@ -73,11 +83,12 @@ export const isApplied = async (id: string, userId: string) => {
   return !!hasApplied;
 };
 
-export const getStudentJobs = async (userId: string) => {
+export const getStudentJobs = async () => {
+  const user = await getUser();
   const appliedJobs = await db.jobApplication.findMany({
     where: {
       student: {
-        userId: userId,
+        userId: user?.user.id,
       },
     },
     include: {
@@ -92,13 +103,62 @@ export const getStudentJobs = async (userId: string) => {
   return appliedJobs;
 };
 
-export const editJobApplication = async () => {};
+export const getAllJobApplications = async () => {
+  const session = await getUser();
+
+  const allapps = await db.jobApplication.findMany({
+    where: {
+      job: {
+        company: {
+          userId: session?.user.id,
+        },
+      },
+    },
+    include: {
+      job: true,
+      student: {
+        select: {
+          fName: true,
+          lName: true,
+        },
+      },
+    },
+  });
+
+  return allapps;
+};
 
 export const deleteJobApplication = async (id: string) => {
-  const deletejob = db.jobApplication.delete({
+  const deletejobapp = db.jobApplication.delete({
     where: {
       jobAppId: id,
     },
   });
-  return deletejob;
+  revalidatePath("/dashboard/student");
+  return deletejobapp;
+};
+
+// User Profile
+
+export const editProfile = async (data: StudentProfileType) => {
+  const session = await getUser();
+  const { fName, lName, address, email, district, state, pin, phone } =
+    studentProfileSchema.parse(data);
+
+  const student = await db.student.update({
+    where: {
+      userId: session?.user.id,
+    },
+    data: {
+      fName,
+      lName,
+      address,
+      email,
+      district,
+      state,
+      pin,
+      phone,
+    },
+  });
+  return student;
 };

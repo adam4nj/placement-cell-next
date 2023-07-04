@@ -1,13 +1,15 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Job } from "@/lib/validators/job";
 import DeleteJobButton from "@/components/job/deleteJob";
 import { EditJobButton } from "@/components/job/editJob";
+import { CompanyJobApplication } from "@/lib/validators/job-application";
+import Link from "next/link";
+import { File } from "lucide-react";
 
-export const columns: ColumnDef<Job>[] = [
+export const jobcolumns: ColumnDef<Job>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -66,15 +68,7 @@ export const columns: ColumnDef<Job>[] = [
     id: "editjob",
     cell: ({ row }) => {
       const job = row.original;
-      return (
-        <EditJobButton
-          jobId={job.jobId}
-          title={job.title}
-          location={job.location}
-          salary={job.salary}
-          details={job.details}
-        />
-      );
+      return <EditJobButton job={job} />;
     },
   },
   {
@@ -83,5 +77,65 @@ export const columns: ColumnDef<Job>[] = [
       const job = row.original;
       return <DeleteJobButton jobId={job.jobId} title={job.title} />;
     },
+  },
+];
+export const appcolumns: ColumnDef<CompanyJobApplication>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    id: "fullName",
+    header: "Name of Applicant",
+    accessorFn: (row) => `${row.student!.fName} ${row.student!.lName}`,
+  },
+  {
+    accessorKey: "job.title",
+    header: "Applied For",
+  },
+
+  {
+    accessorKey: "createdAt",
+    header: "Created On",
+    cell: ({ row }) => {
+      const createddate = Date.parse(row.getValue("createdAt"));
+      const formatted = new Intl.DateTimeFormat("en-UK", {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+      }).format(createddate);
+
+      return <div className="font-medium">{formatted}</div>;
+    },
+  },
+  {
+    accessorKey: "resume",
+    header: "Resume",
+    cell: ({ row }) => {
+      return (
+        <Link href={row.original.resume}>
+          <File />
+        </Link>
+      );
+    },
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
   },
 ];

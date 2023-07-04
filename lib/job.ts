@@ -1,7 +1,6 @@
 import { db } from "./db";
 import { Job } from "@/lib/validators/job";
 import { cache } from "react";
-import { getUser } from "./auth";
 
 export const preloadJobs = () => {
   void getJobsFrmDb();

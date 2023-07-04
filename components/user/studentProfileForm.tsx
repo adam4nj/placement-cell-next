@@ -3,9 +3,8 @@
 import { experimental_useFormStatus as useFormStatus } from "react-dom";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import axios, { AxiosError } from "axios";
 import { Button } from "@/components/ui/button";
-
 import {
   Form,
   FormControl,
@@ -23,16 +22,27 @@ import {
   studentProfileSchema,
   StudentProfileType,
 } from "@/lib/validators/profile";
+import { editProfile, StudentDBType } from "@/actions/jobs";
+import { useMutation } from "@tanstack/react-query";
 
 // 2. Define a submit handler.
 async function onSubmit(values: StudentProfileType) {
-  console.log(values);
+  editProfile(values);
 }
 
-const StudentProfilePage = () => {
+const StudentProfileForm = ({ student }: { student: StudentDBType }) => {
   const form = useForm<StudentProfileType>({
     resolver: zodResolver(studentProfileSchema),
-    defaultValues: {},
+    defaultValues: {
+      fName: student.fName,
+      lName: student.lName!,
+      email: student.email,
+      address: student.address!,
+      district: student.district!,
+      state: student.state!,
+      phone: student.phone!,
+      pin: student.pin!,
+    },
   });
 
   const { pending } = useFormStatus();
@@ -46,7 +56,7 @@ const StudentProfilePage = () => {
         <div className="grid grid-cols-2 gap-5">
           <FormField
             control={form.control}
-            name="firstName"
+            name="fName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>First Name</FormLabel>
@@ -63,7 +73,7 @@ const StudentProfilePage = () => {
           />
           <FormField
             control={form.control}
-            name="lastName"
+            name="lName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Last Name</FormLabel>
@@ -182,4 +192,4 @@ const StudentProfilePage = () => {
   );
 };
 
-export default StudentProfilePage;
+export default StudentProfileForm;

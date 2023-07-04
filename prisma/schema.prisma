@@ -63,6 +63,7 @@ model User {
   email         String?        @unique
   emailVerified DateTime       @default(now())
   image         String?
+  verifyDoc     String?
   role          UserType
   status        Status         @default(Pending)
   accounts      Account[]
@@ -99,6 +100,11 @@ model Student {
   lName             String?
   email             String
   regId             String              @unique
+  address           String?             @db.Text
+  district          String?
+  state             String?
+  pin               Int?
+  phone             Int?
   status            Status
   user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId            String              @unique
@@ -132,7 +138,7 @@ model JobApplication {
   appliedAt DateTime @default(now())
   job       Job      @relation(fields: [jobId], references: [jobId], onDelete: Cascade)
   jobId     String
-  resume    String?
+  resume    String
   status    Status   @default(Pending)
   createdAt DateTime @default(now())
   student   Student? @relation(fields: [studentId], references: [studentId])

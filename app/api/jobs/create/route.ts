@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { stripe } from "@/lib/_jobCheckout";
 import { getUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { newJobSchema } from "@/lib/validators/job";
@@ -31,6 +32,15 @@ export async function POST(req: Request) {
             },
           },
         },
+      });
+      const work = await stripe.products.create({
+        name: title,
+      });
+      await stripe.prices.create({
+        unit_amount: salary,
+        currency: "inr",
+        recurring: { interval: "month" },
+        product: work.id,
       });
     }
 

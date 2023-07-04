@@ -1,29 +1,13 @@
 import { Metadata } from "next";
-import Image from "next/image";
-
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { MenuIcon } from "lucide-react";
-import { Card } from "@/components/ui/card";
 
 export const metadata: Metadata = {
   title: "Forms",
   description: "Advanced form example using react-hook-form and Zod.",
 };
 
-const sidebarNavItems = [
+const sidebarItems = [
   {
     title: "Profile",
     href: "/examples/forms",

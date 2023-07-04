@@ -33,9 +33,7 @@ export const ourFileRouter = {
   })
     .input(z.object({ jobId: z.string() }))
     .middleware(async (opts) => {
-      const session = await getUser();
-
-      const student = await getStudent(session?.user.id);
+      const student = await getStudent();
 
       return {
         jobId: opts.input.jobId,
@@ -57,6 +55,7 @@ export const ourFileRouter = {
               jobId: data.metadata.jobId,
               studentId: data.metadata.studentId,
               resume: data.file.url,
+              status: "Pending",
             },
           })
         : await db.jobApplication.create({
@@ -64,6 +63,7 @@ export const ourFileRouter = {
               jobId: data.metadata.jobId,
               studentId: data.metadata.studentId,
               resume: data.file.url,
+              status: "Pending",
             },
           });
     }),

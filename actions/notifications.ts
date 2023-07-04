@@ -15,9 +15,21 @@ export async function addOne(title: string, content: string, userId: string) {
 export async function editOne(
   id: string,
   title: string,
-  content: string,
-  link: string
+  content?: string,
+  link?: string
 ) {
+  if (!content || !link) {
+    const editnotif = await db.notification.update({
+      where: {
+        id: id,
+      },
+      data: {
+        title,
+      },
+    });
+    return editnotif;
+  }
+
   const editnotif = await db.notification.update({
     where: {
       id: id,
