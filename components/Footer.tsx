@@ -5,8 +5,8 @@ const Footer = () => {
   return (
     <footer aria-label="Site Footer" className="bg-black">
       <div className="max-w-screen-xl px-4 py-8 mx-auto space-y-8 sm:px-6 lg:space-y-16 lg:px-8">
-        <div className="flex flex-row">
-          <div className="w-1/3">
+        <div className="flex md:flex-row flex-col gap-4 justify-between">
+          <div className="md:w-1/3 w-2/3 mx-5">
             <div className="text-white">
               <Image
                 src="assets/logo-dark.svg"
@@ -16,7 +16,7 @@ const Footer = () => {
               />
             </div>
 
-            <p className="max-w-xs mt-4 text-gray-300">
+            <p className="mt-4 text-gray-300">
               Website of Placement Cell, Dr. JMC
               <br />
               Aranattukara, Thrissur
@@ -46,9 +46,9 @@ const Footer = () => {
               </Link>
             </div>
           </div>
-          <div className="w-2/3 flex flex-col space-y-4">
+          <div className="w-2/3 flex flex-col space-y-3 mx-5 justify-left">
             <h6 className="text-white font-semibold text-2xl">Contact Us</h6>
-            <div className="flex flex-row w-4/5 justify-between">
+            <div className="flex flex-col sm:flex-row w-fit md:w-4/5 justify-between gap-6">
               <p className="text-white text-left">
                 <span className="font-medium">
                   CCSIT Dr. John Mathai Centre
@@ -67,11 +67,11 @@ const Footer = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-row space-x-5 justify-between">
-          <p className="text-xs text-gray-500">
+        <div className="flex flex-col md:flex-row justify-between mx-5">
+          <p className="text-xs text-gray-500 mb-5">
             &copy; 2023. Placement Cell. All rights reserved.
           </p>
-          <ul className="text-slate-100 text-sm flex flex-row mx-auto gap-10 justify-between">
+          <ul className="text-slate-100 text-sm flex flex-col md:flex-row md:mx-auto gap-10 justify-left md:justify-between">
             <li>
               <Link href="/about">About</Link>
             </li>
