@@ -4,6 +4,7 @@ import { editNotification } from "@/actions/notifications";
 import {
   newNotificationSchema,
   Notification,
+  NotificationWithDate,
 } from "@/lib/validators/notification";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,7 +35,7 @@ import { useState } from "react";
 // change these
 
 type editNotifProps = {
-  data: Notification;
+  data: NotificationWithDate;
 };
 
 export default function EditNotifButton({ data }: editNotifProps) {

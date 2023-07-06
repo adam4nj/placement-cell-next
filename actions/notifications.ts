@@ -37,4 +37,5 @@ export async function deleteNotification(id: string) {
       id: id,
     },
   });
+  revalidatePath("/company/dashboard/notifications");
 }

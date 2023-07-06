@@ -23,8 +23,8 @@ const sidebarItems = [
     href: "/dashboard/admin/jobs",
   },
   {
-    title: "Internships",
-    href: "/dashboard/admin/internships",
+    title: "Notifications",
+    href: "/dashboard/admin/notifications",
   },
   {
     title: "Payments",
@@ -47,7 +47,7 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
         <div className="flex justify-between">
           <h2 className="ml-5 text-4xl font-black pt-2">Dashboard</h2>
           <div className="ml-auto flex items-center space-x-4">
-            <span>{session.user.name}</span>
+            <span className="hidden sm:block">{session.user.name}</span>
             <ProfileNav session={session} />
           </div>
         </div>

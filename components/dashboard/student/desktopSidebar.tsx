@@ -57,14 +57,6 @@ export const DesktopSidebar = ({
                 {item.title}
               </Link>
             ))}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="justify-start w-full"
-              onClick={() => signOut()}
-            >
-              Log Out
-            </Button>
           </div>
         </div>
       </div>

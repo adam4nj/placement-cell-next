@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteOne } from "@/actions/notifications";
+import { deleteNotification } from "@/actions/notifications";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,7 +25,12 @@ const DeleteNotifButton = ({ id, title }: DeleteNotifProps) => {
     <div>
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <TrashIcon className="h-4 w-4" />
+          <Button
+            variant="outline"
+            className="rounded-full h-12 w-12 border-slate-600 opacity-60"
+          >
+            <TrashIcon />
+          </Button>
         </AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -41,7 +46,7 @@ const DeleteNotifButton = ({ id, title }: DeleteNotifProps) => {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => deleteOne(id)}>
+            <AlertDialogAction onClick={() => deleteNotification(id)}>
               Delete Notification
             </AlertDialogAction>
           </AlertDialogFooter>

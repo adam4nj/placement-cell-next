@@ -12,9 +12,10 @@ import { getAllNotifications } from "@/actions/notifications";
 import Link from "next/link";
 import EditNotifButton from "@/components/notification/editNotifButton";
 import DeleteNotifButton from "@/components/notification/deleteNotifButton";
+import { NotificationWithDate } from "@/lib/validators/notification";
 
 const NotificationsData = async () => {
-  const notifications = await getAllNotifications();
+  const notifications = (await getAllNotifications()) as NotificationWithDate[];
   return (
     <div>
       Notifications
@@ -49,16 +50,7 @@ const NotificationsData = async () => {
                   )}
                 </TableCell>
                 <TableCell>
-                  {!item.content || !item.link ? (
-                    <EditNotifButton id={item.id} title={item.title} />
-                  ) : (
-                    <EditNotifButton
-                      id={item.id}
-                      title={item.title}
-                      content={item.content}
-                      link={item.link}
-                    />
-                  )}
+                  <EditNotifButton data={item} />
                 </TableCell>
                 <TableCell className="text-right">
                   <DeleteNotifButton id={item.id} title={item.title} />
