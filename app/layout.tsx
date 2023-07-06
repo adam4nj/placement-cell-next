@@ -1,8 +1,7 @@
 import "./globals.css";
-import { Lato } from "next/font/google";
+import { Raleway } from "next/font/google";
 import QueryProvider from "./providers";
 ("./providers");
-import { twMerge } from "tailwind-merge";
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata = {
@@ -10,7 +9,7 @@ export const metadata = {
   description: "Placement Cell of Dr. John Mathai Centre",
 };
 
-const leagueSpartan = Lato({
+const leagueSpartan = Raleway({
   weight: "700",
   style: "normal",
   subsets: ["latin"],

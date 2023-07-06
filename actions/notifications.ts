@@ -1,35 +1,20 @@
+"use server";
+
 import { db } from "@/lib/db";
-import { addNotification } from "@/lib/notifications";
+import {
+  NewNotification,
+  newNotificationSchema,
+} from "@/lib/validators/notification";
 import { revalidatePath } from "next/cache";
 
-export async function getAllNotifications() {
-  const notifications = await db.notification.findMany();
-  return notifications;
-}
-
-export async function addOne(title: string, content: string, userId: string) {
-  const notification = await addNotification(title, content, userId);
+export const getAllNotifications = async () => {
+  const notification = await db.notification.findMany();
+  revalidatePath("dashboard/admin/notifications");
   return notification;
-}
+};
 
-export async function editOne(
-  id: string,
-  title: string,
-  content?: string,
-  link?: string
-) {
-  if (!content || !link) {
-    const editnotif = await db.notification.update({
-      where: {
-        id: id,
-      },
-      data: {
-        title,
-      },
-    });
-    return editnotif;
-  }
-
+export async function editNotification(id: string, data: NewNotification) {
+  const { title, content, link } = newNotificationSchema.parse(data);
   const editnotif = await db.notification.update({
     where: {
       id: id,
@@ -46,7 +31,7 @@ export async function editOne(
   return editnotif;
 }
 
-export async function deleteOne(id: string) {
+export async function deleteNotification(id: string) {
   await db.notification.delete({
     where: {
       id: id,

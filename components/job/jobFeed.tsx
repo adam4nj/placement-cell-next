@@ -3,7 +3,6 @@ import { Loader2 } from "lucide-react";
 import JobCard from "../jobCard";
 import { getAllJobs } from "@/actions/jobs";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 
 const JobFeed = async () => {
   const jobs = await getAllJobs();
@@ -11,7 +10,7 @@ const JobFeed = async () => {
   if (!jobs) return notFound();
 
   return (
-    <ul className="flex flex-col col-span-2 space-y-6">
+    <ul className="grid grid-rows-2 sm:grid-rows-1 gap-3 space-y-6">
       {jobs.map((job, index) => {
         if (index === jobs.length - 1) {
           // Add a ref to the last post in the list

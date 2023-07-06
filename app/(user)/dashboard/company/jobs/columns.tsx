@@ -53,7 +53,7 @@ export const jobcolumns: ColumnDef<Job>[] = [
   },
   {
     accessorKey: "salary",
-    header: () => <div>Salary</div>,
+    header: "Salary",
     cell: ({ row }) => {
       const salary = parseFloat(row.getValue("salary"));
       const formatted = new Intl.NumberFormat("en-US", {

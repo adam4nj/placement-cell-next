@@ -44,9 +44,9 @@ export function EditJobButton({ job }: { job: Job }) {
 
   // 2. Define a submit handler.
   const onSubmit = (values: Job) => {
-    setOpen(false);
     console.log(values);
     editJob(values);
+    setOpen(false);
   };
 
   useEffect(() => {

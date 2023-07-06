@@ -14,8 +14,10 @@ const JobDataPage = async () => {
 
   return (
     <div className="container w-full mx-auto py-10 space-y-4">
-      <span className="text-2xl font-semibold">Posted Jobs</span>
-      <DataTable columns={columns} data={jobData} />
+      <div>
+        <span className="text-2xl font-semibold">Posted Jobs</span>
+        <DataTable columns={columns} data={jobData} />
+      </div>
     </div>
   );
 };

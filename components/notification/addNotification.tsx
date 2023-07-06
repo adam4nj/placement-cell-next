@@ -1,10 +1,5 @@
 "use client";
 
-import { editNotification } from "@/actions/notifications";
-import {
-  newNotificationSchema,
-  Notification,
-} from "@/lib/validators/notification";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -28,49 +23,63 @@ import { Input } from "@/components/ui/input";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { EditIcon, Pencil } from "lucide-react";
-import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
+import { useMutation } from "@tanstack/react-query";
+import {
+  newNotificationSchema,
+  NewNotification,
+} from "@/lib/validators/notification";
+import axios from "axios";
+import { toast } from "../ui/use-toast";
+import { Textarea } from "../ui/textarea";
 import { useState } from "react";
-// change these
 
-type editNotifProps = {
-  data: Notification;
+type addNotifProps = {
+  className?: string;
 };
 
-export default function EditNotifButton({ data }: editNotifProps) {
+export default function AddNotifButton({ className }: addNotifProps) {
   const [open, setOpen] = useState(false);
 
   const form = useForm<z.infer<typeof newNotificationSchema>>({
     resolver: zodResolver(newNotificationSchema),
-    defaultValues: {
-      title: data.title,
-      // change these
-      content: data.content!,
-      link: data.link!,
+  });
+
+  const { mutate: addNotification } = useMutation({
+    mutationFn: async ({ title, content, link }: NewNotification) => {
+      const payload: NewNotification = { title, content, link };
+      const { data } = await axios.post("/api/notifications", payload);
+      return data;
+    },
+    onError: () => {
+      return toast({
+        title: "Something went wrong.",
+        description: "Your job was not published. Please try again.",
+        variant: "destructive",
+      });
+    },
+    onSuccess: () => {
+      return toast({
+        description: "Your post has been published.",
+      });
     },
   });
 
-  async function onSubmit(values: z.infer<typeof newNotificationSchema>) {
-    await editNotification(data.id, values);
-    form.reset(values);
+  async function onSubmit(data: z.infer<typeof newNotificationSchema>) {
+    addNotification(data);
+    form.reset(data);
     setOpen(false);
   }
-
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="rounded-full h-12 w-12 border-slate-600 opacity-60"
-        >
-          <Pencil className="border-black" />
-        </Button>
+        <Button className={cn(className)}>Add Notification</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit Notification</DialogTitle>
+          <DialogTitle>Add Notification</DialogTitle>
           <DialogDescription>
-            Make changes to your notification here. Click save when youre done.
+            Provide a detailed description for the notification here{" "}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
