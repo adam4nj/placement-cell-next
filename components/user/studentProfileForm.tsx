@@ -1,9 +1,6 @@
 "use client";
 
-import { experimental_useFormStatus as useFormStatus } from "react-dom";
-
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios, { AxiosError } from "axios";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -23,11 +20,16 @@ import {
   StudentProfileType,
 } from "@/lib/validators/profile";
 import { editProfile, StudentDBType } from "@/actions/jobs";
-import { useMutation } from "@tanstack/react-query";
+import { toast } from "@/components/ui/use-toast";
 
-// 2. Define a submit handler.
 async function onSubmit(values: StudentProfileType) {
-  editProfile(values);
+  await editProfile(values);
+  toast({
+    title: "Profile Updated",
+    description: "Your Profile was successfully updated",
+  });
+
+  console.log(values);
 }
 
 const StudentProfileForm = ({ student }: { student: StudentDBType }) => {
@@ -45,15 +47,13 @@ const StudentProfileForm = ({ student }: { student: StudentDBType }) => {
     },
   });
 
-  const { pending } = useFormStatus();
-
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col w-full space-y-8 mx-auto justify-between"
       >
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <FormField
             control={form.control}
             name="fName"
@@ -136,7 +136,7 @@ const StudentProfileForm = ({ student }: { student: StudentDBType }) => {
             </FormItem>
           )}
         />
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <FormField
             control={form.control}
             name="district"
@@ -177,16 +177,22 @@ const StudentProfileForm = ({ student }: { student: StudentDBType }) => {
             )}
           />
         </div>
-        <div className="flex flex-row justify-between">
-          <Button variant="destructive">Cancel Changes</Button>
-          <Button
-            type="submit"
-            className={pending ? "bg-slate-500 w-1/3" : "w-1/3"}
-            disabled={pending}
-          >
-            Update Profile
-          </Button>
-        </div>
+        {form.formState.isDirty && (
+          <div className="flex flex-row flex-wrap gap-4 justify-between">
+            <Button variant="destructive" onClick={() => form.reset()}>
+              Cancel Changes
+            </Button>
+            <Button
+              type="submit"
+              className={
+                form.formState.isSubmitting ? "bg-slate-500 w-fit" : "w-fit"
+              }
+              disabled={form.formState.isSubmitting}
+            >
+              Update Profile
+            </Button>
+          </div>
+        )}
       </form>
     </Form>
   );

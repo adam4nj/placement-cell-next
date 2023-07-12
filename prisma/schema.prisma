@@ -104,7 +104,7 @@ model Student {
   district          String?
   state             String?
   pin               Int?
-  phone             Int?
+  phone             String?
   status            Status
   user              User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId            String              @unique

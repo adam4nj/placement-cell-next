@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getUser } from "@/lib/auth";
 import { DesktopSidebar } from "@/components/dashboard/student/desktopSidebar";
 import { ProfileNav } from "@/components/dashboard/profileNav";
+import { MobileSidebar } from "@/components/dashboard/student/mobileSidebar";
 
 export const metadata: Metadata = {
   title: "Admin - Dashboard",
@@ -43,6 +44,7 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
   return (
     <>
       <DesktopSidebar items={sidebarItems} />
+      <MobileSidebar items={sidebarItems} />
       <div className="lg:pl-72 m-5">
         <div className="flex justify-between">
           <h2 className="ml-5 text-4xl font-black pt-2">Dashboard</h2>

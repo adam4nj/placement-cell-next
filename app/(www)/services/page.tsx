@@ -1,8 +1,4 @@
-import React from "react";
-
-type Props = {};
-
-const ServicesPage = (props: Props) => {
+const ServicesPage = () => {
   return (
     <div className="container relative flex flex-col justify-between h-full max-w-6xl px-10 mx-auto xl:px-0 mt-5">
       <h2 className="mb-1 text-3xl font-extrabold leading-tight text-gray-900">

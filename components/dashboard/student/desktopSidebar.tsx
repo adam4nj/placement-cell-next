@@ -38,9 +38,6 @@ export const DesktopSidebar = ({
       </Link>
       <div className="space-y-4">
         <div className="px-6 py-2">
-          <h2 className="px-2 mb-2 text-lg font-semibold tracking-tight">
-            {/* Events */}
-          </h2>
           <div className="space-y-1">
             {items.map((item) => (
               <Link

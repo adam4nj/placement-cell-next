@@ -1,5 +1,4 @@
 import { db } from "@/lib/db";
-import { stripe } from "./_jobCheckout";
 
 import {
   firstName,
@@ -78,10 +77,6 @@ export const registerCompany = async (body: RegisterFormType) => {
         },
       },
     },
-  });
-  await stripe.customers.create({
-    email,
-    name,
   });
 
   return companyUser;

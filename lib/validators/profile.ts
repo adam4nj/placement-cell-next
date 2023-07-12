@@ -11,7 +11,7 @@ export const studentProfileSchema = z.object({
   district: z.string(),
   state: z.string(),
   pin: z.coerce.number(),
-  phone: z.coerce.number(),
+  phone: z.string().regex(/^\d+$/),
 });
 
 export type StudentProfileType = z.infer<typeof studentProfileSchema>;
@@ -25,7 +25,7 @@ export const companyProfileSchema = z.object({
   address: z.string(),
   district: z.string(),
   state: z.string(),
-  pin: z.coerce.number(),
+  pin: z.string(),
 });
 
 export type CompanyProfileType = z.infer<typeof companyProfileSchema>;

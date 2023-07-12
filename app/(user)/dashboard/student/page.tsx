@@ -1,12 +1,13 @@
-import { getStudentJobs } from "@/actions/jobs";
+import { getAllJobApplications, getStudentJobs } from "@/actions/jobs";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { columns } from "./columns";
+import { applied_columns, replied_columns } from "./columns";
 import { DataTable } from "@/components/dataTable";
 
 const AppliedJobs = async () => {
-  const data = await getStudentJobs();
+  const applied = await getStudentJobs();
+  const replied = await getAllJobApplications();
 
   return (
     <Tabs defaultValue="job-applied" className="w-full">
@@ -15,9 +16,11 @@ const AppliedJobs = async () => {
         <TabsTrigger value="job-replied">Replied Jobs</TabsTrigger>
       </TabsList>
       <TabsContent className="w-full" value="job-applied">
-        <DataTable columns={columns} data={data} />
+        <DataTable columns={applied_columns} data={applied} />
       </TabsContent>
-      <TabsContent value="job-replied">There is nothing here</TabsContent>
+      <TabsContent className="w-full" value="job-replied">
+        <DataTable columns={replied_columns} data={replied} />
+      </TabsContent>
     </Tabs>
   );
 };

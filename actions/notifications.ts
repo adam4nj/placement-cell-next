@@ -13,6 +13,15 @@ export const getAllNotifications = async () => {
   return notification;
 };
 
+export const getCurrentNotification = async (id: string) => {
+  const notification = await db.notification.findFirst({
+    where: {
+      id: id,
+    },
+  });
+  return notification;
+};
+
 export async function editNotification(id: string, data: NewNotification) {
   const { title, content, link } = newNotificationSchema.parse(data);
   const editnotif = await db.notification.update({

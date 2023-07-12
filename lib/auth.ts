@@ -3,6 +3,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { Adapter } from "next-auth/adapters";
+import { loginFormSchema } from "./validators/auth";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db) as Adapter,
@@ -29,15 +30,16 @@ export const authOptions: NextAuthOptions = {
       },
 
       async authorize(credentials) {
-        if (!credentials?.username || !credentials.password) return null;
+        if (!credentials) return null;
+        const { username, password } = loginFormSchema.parse(credentials);
 
         const user = await db.user.findUnique({
           where: {
-            username: credentials.username,
+            username: username,
           },
         });
         if (!user) return null;
-        const isValidPassword = credentials.password === user.password;
+        const isValidPassword = password === user.password;
 
         if (!isValidPassword) return null;
 

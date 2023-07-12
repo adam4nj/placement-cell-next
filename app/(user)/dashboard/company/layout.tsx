@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { DesktopSidebar } from "@/components/dashboard/student/desktopSidebar";
 import { AddJob } from "@/components/job/addJob";
+import { MobileSidebar } from "@/components/dashboard/student/mobileSidebar";
 
 export const metadata: Metadata = {
   title: "Company - Dashboard",
@@ -34,6 +35,7 @@ export default function CompanyLayout({ children }: CompanyLayoutProps) {
   return (
     <>
       <DesktopSidebar items={sidebarItems} />
+      <MobileSidebar items={sidebarItems} />
       <AddJob />
       <div className="lg:pl-72 m-5">{children}</div>
     </>

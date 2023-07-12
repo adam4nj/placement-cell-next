@@ -144,21 +144,28 @@ export const editProfile = async (data: StudentProfileType) => {
   const session = await getUser();
   const { fName, lName, address, email, district, state, pin, phone } =
     studentProfileSchema.parse(data);
-
-  const student = await db.student.update({
-    where: {
-      userId: session?.user.id,
-    },
-    data: {
-      fName,
-      lName,
-      address,
-      email,
-      district,
-      state,
-      pin,
-      phone,
-    },
-  });
-  return student;
+  const { success } = studentProfileSchema.safeParse(data);
+  try {
+    if (!!session) {
+      const studentdata = await db.student.update({
+        where: {
+          userId: session?.user.id,
+        },
+        data: {
+          fName,
+          lName,
+          address,
+          email,
+          district,
+          state,
+          pin,
+          phone,
+        },
+      });
+      console.log(studentdata, success);
+      return studentdata;
+    }
+  } catch {
+    throw new Error("There was a problem");
+  }
 };
