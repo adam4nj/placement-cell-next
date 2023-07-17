@@ -1,7 +1,11 @@
 "use client";
 
+import { Check } from "lucide-react";
+import { Button } from "../ui/button";
+import { hasAppliedJob } from "@/actions/jobs";
+import { cn } from "@/lib/utils";
+
 import { UploadDropzone } from "@/utils/uploadthing";
-import { Button } from "@/components/ui/button";
 
 import {
   Dialog,
@@ -17,22 +21,43 @@ import { toast } from "../ui/use-toast";
 type Props = {
   jobId: string;
   title: string;
+  userId: string;
+  hasApplied: boolean;
 };
 
-export const JobApplyButton = ({ jobId, title }: Props) => {
+export const JobApplyButton = ({ jobId, title, userId, hasApplied }: Props) => {
   const [open, setOpen] = useState(false);
+  const [applied, setApplied] = useState(hasApplied);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Apply</Button>
+        <Button
+          onClick={async () => {
+            await hasAppliedJob(jobId, userId);
+            setApplied(true);
+          }}
+          className={cn("bg-black", {
+            "bg-blue-950": hasApplied,
+          })}
+          disabled={applied}
+        >
+          {applied ? (
+            <div className="inline-flex">
+              <Check />
+              Applied
+            </div>
+          ) : (
+            <span>Apply</span>
+          )}
+        </Button>
       </DialogTrigger>
-      <DialogContent className="w-full h-fit px-10">
+      <DialogContent className="h-fit w-full px-10">
         <DialogHeader>Apply to this position</DialogHeader>
         <DialogDescription>
           Please upload your up-to-date resume
         </DialogDescription>
-        <div className="flex md:flex-row flex-col gap-2 justify-between">
+        <div className="flex flex-col justify-between gap-2 md:flex-row">
           <div>
             <span className="font-semibold">Job ID</span>
             <br />
@@ -44,7 +69,7 @@ export const JobApplyButton = ({ jobId, title }: Props) => {
             {title}
           </div>
         </div>
-        <div className="m-10 px-5 text-center border border-slate-300 rounded-lg bg-slate-100 shadow-inner">
+        <div className="m-10 rounded-lg border border-slate-300 bg-slate-100 px-5 text-center shadow-inner">
           <UploadDropzone
             endpoint="pdfWithInput"
             input={{ jobId }}

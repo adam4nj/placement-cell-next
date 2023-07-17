@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getUser } from "@/lib/auth";
 import { DesktopSidebar } from "@/components/dashboard/student/desktopSidebar";
 import { ProfileNav } from "@/components/dashboard/profileNav";
+import CurrentPath from "@/components/dashboard/pathname";
 import { MobileSidebar } from "@/components/dashboard/student/mobileSidebar";
 
 export const metadata: Metadata = {
@@ -45,10 +46,12 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
     <>
       <DesktopSidebar items={sidebarItems} />
       <MobileSidebar items={sidebarItems} />
-      <div className="lg:pl-72 m-5">
-        <div className="flex justify-between">
-          <h2 className="ml-5 text-4xl font-black pt-2">Dashboard</h2>
-          <div className="ml-auto flex items-center space-x-4">
+      <div className="m-5 lg:pl-72">
+        <div className="flex flex-row justify-between pt-5">
+          <h6 className="mx-5 text-3xl font-black">
+            Dashboard / <CurrentPath className="text-slate-600" />
+          </h6>
+          <div className="ml-auto hidden items-center space-x-4 sm:flex">
             <span className="hidden sm:block">{session.user.name}</span>
             <ProfileNav session={session} />
           </div>

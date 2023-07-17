@@ -55,7 +55,7 @@ export default function Hero() {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-6 h-6"
+              className="h-6 w-6"
             >
               <path
                 strokeLinecap="round"
@@ -71,7 +71,7 @@ export default function Hero() {
 
   return (
     <div className="relative">
-      <div className="bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] hover:from-gray-600 hover:via-gray-800 hover:to-black from-gray-700 via-gray-900 to-black transition-all delay-300">
+      <div className="bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black transition-all delay-300 hover:from-gray-600 hover:via-gray-800 hover:to-black">
         <header>
           <div className={`md:hidden ${state ? "mx-2 pb-5" : "hidden"}`}>
             <Brand />
@@ -79,18 +79,18 @@ export default function Hero() {
           <nav
             className={`pb-5 md:text-sm ${
               state
-                ? "absolute z-20 top-0 inset-x-0 bg-gray-800 rounded-xl mx-2 mt-2 md:mx-0 md:mt-0 md:relative md:bg-transparent"
+                ? "absolute inset-x-0 top-0 z-20 mx-2 mt-2 rounded-xl bg-gray-800 md:relative md:mx-0 md:mt-0 md:bg-transparent"
                 : ""
             }`}
           >
-            <div className="gap-x-14 items-center max-w-screen-xl mx-auto px-4 md:flex md:px-8">
+            <div className="mx-auto max-w-screen-xl items-center gap-x-14 px-4 md:flex md:px-8">
               <Brand />
               <div
-                className={`flex-1 items-center mt-8 md:mt-0 md:flex ${
+                className={`mt-8 flex-1 items-center md:mt-0 md:flex ${
                   state ? "block" : "hidden"
                 } `}
               >
-                <ul className="flex-1 justify-end items-center space-y-6 md:flex md:space-x-6 md:space-y-0">
+                <ul className="flex-1 items-center justify-end space-y-6 md:flex md:space-x-6 md:space-y-0">
                   {navigation.map((item, idx) => {
                     return (
                       <li
@@ -106,7 +106,7 @@ export default function Hero() {
                   <li>
                     <Link
                       href="/login"
-                      className="flex items-center justify-center gap-x-1 py-2 px-4 text-white hover:text-black active:text-slate-800 font-medium border bg-transparent hover:bg-slate-100 active:bg-gray-400 duration-150 rounded-full md:inline-flex"
+                      className="flex items-center justify-center gap-x-1 rounded-full border bg-transparent px-4 py-2 font-medium text-white duration-150 hover:bg-slate-100 hover:text-black active:bg-gray-400 active:text-slate-800 md:inline-flex"
                     >
                       Login
                     </Link>
@@ -117,18 +117,18 @@ export default function Hero() {
           </nav>
         </header>
         <section className="relative">
-          <div className="relative z-10 max-w-screen-xl mx-auto px-4 pt-20 pb-28 md:px-8">
-            <div className="space-y-5 max-w-4xl mx-auto text-center">
-              <h2 className="md:leading-relaxed text-4xl text-white font-bold mx-auto md:text-5xl">
+          <div className="relative z-10 mx-auto max-w-screen-xl px-4 pb-28 pt-20 md:px-8">
+            <div className="mx-auto max-w-4xl space-y-5 text-center">
+              <h2 className="mx-auto text-4xl font-bold text-white md:text-5xl md:leading-relaxed">
                 Build yourselves a great career with{" "}
                 <span className="font-extrabold">Placement Cell JMC</span>
               </h2>
-              <p className=" max-w-2xl mx-auto text-gray-400">
+              <p className=" mx-auto max-w-2xl text-gray-400">
                 An efficient way for creating and managing job applications
               </p>
-              <div className="justify-center items-center gap-5 sm:flex">
+              <div className="items-center justify-center gap-5 sm:flex">
                 <Link
-                  className="flex items-center justify-center gap-x-2 py-2.5 px-4 mt-3 w-full text-sm text-white font-medium bg-sky-500 hover:bg-sky-400 active:bg-sky-600 duration-150 rounded-lg sm:mt-0 sm:w-auto"
+                  className="mt-3 flex w-full items-center justify-center gap-x-2 rounded-lg bg-sky-500 px-4 py-2.5 text-sm font-medium text-white duration-150 hover:bg-sky-400 active:bg-sky-600 sm:mt-0 sm:w-auto"
                   href="/register"
                 >
                   Get started
@@ -136,7 +136,7 @@ export default function Hero() {
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
-                    className="w-5 h-5"
+                    className="h-5 w-5"
                   >
                     <path
                       fillRule="evenodd"

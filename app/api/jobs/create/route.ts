@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-import { stripe } from "@/lib/_jobCheckout";
 import { getUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { newJobSchema } from "@/lib/validators/job";
@@ -9,7 +8,8 @@ import { NextResponse } from "next/server";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { title, location, salary, details, date } = newJobSchema.parse(body);
+    const { title, type, location, salary, details, date } =
+      newJobSchema.parse(body);
 
     const session = await getUser();
 
@@ -21,6 +21,7 @@ export async function POST(req: Request) {
       await db.job.create({
         data: {
           title,
+          type,
           location,
           salary,
           details,
@@ -33,15 +34,6 @@ export async function POST(req: Request) {
           },
         },
       });
-      const work = await stripe.products.create({
-        name: title,
-      });
-      await stripe.prices.create({
-        unit_amount: salary,
-        currency: "inr",
-        recurring: { interval: "month" },
-        product: work.id,
-      });
     }
 
     return new NextResponse("OK");
@@ -49,7 +41,7 @@ export async function POST(req: Request) {
     if (err instanceof z.ZodError) {
       return new NextResponse(err.message, { status: 422 });
     }
-
+    console.log(req.json);
     return new NextResponse(
       "Could not create the given job. Please try again..",
       { status: 500 }

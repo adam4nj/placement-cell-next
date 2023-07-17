@@ -159,9 +159,19 @@ model InternApplication {
   paymentId   String?
   student     Student? @relation(fields: [studentId], references: [studentId])
   studentId   String?
+  Intern      Intern?
 
   @@index([jobId])
   @@index([studentId])
+}
+
+model Intern {
+  internId    String            @id
+  paymentId   String?
+  internapp   InternApplication @relation(fields: [internappId], references: [internAppId])
+  internappId String            @unique
+
+  @@index([internappId])
 }
 
 model Feedback {

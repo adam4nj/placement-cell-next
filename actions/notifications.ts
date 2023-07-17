@@ -10,6 +10,7 @@ import { revalidatePath } from "next/cache";
 export const getAllNotifications = async () => {
   const notification = await db.notification.findMany();
   revalidatePath("dashboard/admin/notifications");
+  revalidatePath("/jobs");
   return notification;
 };
 

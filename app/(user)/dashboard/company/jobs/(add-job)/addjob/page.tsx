@@ -1,7 +1,7 @@
 import JobForm from "@/components/job/jobForm";
 
-const page = () => {
+const Page = () => {
   return <JobForm />;
 };
 
-export default page;
+export default Page;

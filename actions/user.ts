@@ -27,7 +27,7 @@ export async function registerCompanyAction(body: RegisterFormType) {
   await registerCompany(body);
 }
 
-export async function changeStatus(id: string, status: Status) {
+export async function changeUserStatus(id: string, status: Status) {
   await db.user.update({
     where: {
       id,

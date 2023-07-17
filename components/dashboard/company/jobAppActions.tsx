@@ -1,5 +1,4 @@
 "use client";
-import { changeUserStatus } from "@/actions/user";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -44,16 +43,18 @@ import {
 
 import { MoreHorizontal } from "lucide-react";
 
-import { userSchema } from "@/lib/validators/usertable";
 import { Row } from "@tanstack/react-table";
 import { useState } from "react";
+import { companyJobApplicationSchema } from "@/lib/validators/job-application";
+import { changeJobAppStatus } from "@/actions/jobs";
+import Link from "next/link";
 
-interface VerifyUserProps<TData> {
+interface JobStatusProps<TData> {
   row: Row<TData>;
 }
 
-export function UserActions<TData>({ row }: VerifyUserProps<TData>) {
-  const user = userSchema.parse(row.original);
+export function JobAppActions<TData>({ row }: JobStatusProps<TData>) {
+  const job = companyJobApplicationSchema.parse(row.original);
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof statusSchema>>({
     resolver: zodResolver(statusSchema),
@@ -61,11 +62,16 @@ export function UserActions<TData>({ row }: VerifyUserProps<TData>) {
 
   async function onSubmit(data: z.infer<typeof statusSchema>) {
     setOpen(false);
-    await changeUserStatus(user.id, data.status);
-    toast({
-      title: "Status Updated",
-      description: `The user status was updated to ${data.status} `,
-    });
+    (await changeJobAppStatus(job.jobAppId, data.status))
+      ? toast({
+          title: "Status Updated",
+          description: `The job status was updated to ${data.status} `,
+        })
+      : toast({
+          title: "Error!",
+          description: `An error occurred. Please try again.. `,
+          variant: "destructive",
+        });
   }
 
   return (
@@ -84,7 +90,7 @@ export function UserActions<TData>({ row }: VerifyUserProps<TData>) {
           <DropdownMenuContent align="end" className="z-10 w-[160px]">
             <DialogTrigger asChild>
               <DropdownMenuItem>
-                <span>Verify User</span>
+                <span>Update Status</span>
               </DropdownMenuItem>
             </DialogTrigger>
             <DropdownMenuItem>Make a copy</DropdownMenuItem>
@@ -93,27 +99,27 @@ export function UserActions<TData>({ row }: VerifyUserProps<TData>) {
         </DropdownMenu>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Verify User</DialogTitle>
+            <DialogTitle>Update Status</DialogTitle>
             <DialogDescription>
-              This allows you to grant continued access to this user by
-              verifying credentials.
+              Updates the job applicants status
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <h4 className="flex flex-col align-text-top">
-              Username:
+              Job Title:
               <br />
-              {user.username}
+              {job.job.title}
             </h4>
             <h4 className="flex flex-col ">
-              Name:
+              Applicant Name:
               <br />
-              {user.name}
+              {job.student!.fName} {job.student!.lName}
             </h4>
-            <h2 className="flex flex-col">
-              Role:
-              <br />
-              {user.role}
+            <h2 className="flex flex-row space-x-2">
+              Resume:
+              <Link href={job.resume} target="_blank">
+                View Resume
+              </Link>
             </h2>
             <Form {...form}>
               <form
@@ -127,7 +133,7 @@ export function UserActions<TData>({ row }: VerifyUserProps<TData>) {
                     <FormItem>
                       <FormLabel>Status</FormLabel>
                       <Select
-                        defaultValue={user.status}
+                        defaultValue={job.status}
                         value={field.value}
                         //@ts-expect-error
                         onValueChange={field.onChange}

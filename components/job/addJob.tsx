@@ -27,16 +27,16 @@ export function AddJob() {
           <span className="sr-only">Add</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent align="start">
         <DropdownMenuLabel>Add New</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <Link href="/company/dashboard/jobs/addjob">
+        <Link href="/dashboard/company/jobs/addjob">
           <DropdownMenuItem>Job</DropdownMenuItem>
         </Link>
-        <Link href="/company/dashboard/internships/add-internship">
+        <Link href="/dashboard/company/internships/add-internship">
           <DropdownMenuItem>Internship</DropdownMenuItem>
         </Link>
-        <Link href="/company/dashboard/notifications/add-notification">
+        <Link href="/dashboard/company/notifications/add-notification">
           <DropdownMenuItem>Notification</DropdownMenuItem>
         </Link>
       </DropdownMenuContent>

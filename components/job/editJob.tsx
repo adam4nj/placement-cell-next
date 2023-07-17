@@ -14,6 +14,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Form,
   FormControl,
   FormDescription,
@@ -33,6 +40,7 @@ export function EditJobButton({ job }: { job: Job }) {
     resolver: zodResolver(jobSchema),
     defaultValues: {
       jobId: job.jobId,
+      type: job.type,
       title: job.title,
       location: job.location,
       salary: job.salary,
@@ -61,7 +69,7 @@ export function EditJobButton({ job }: { job: Job }) {
           <EditIcon className="h-4 w-4" />
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:w-[600px]">
         <DialogHeader>
           <DialogTitle>Edit profile</DialogTitle>
           <DialogDescription>
@@ -71,13 +79,13 @@ export function EditJobButton({ job }: { job: Job }) {
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit)}
-            className="grid grid-cols-2 gap-3 space-y-8"
+            className="grid grid-cols-1 gap-3"
           >
             <FormField
               control={form.control}
               name="jobId"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="hidden">
                   <FormLabel>Job Id</FormLabel>
                   <FormControl>
                     <Input disabled {...field} />
@@ -85,6 +93,31 @@ export function EditJobButton({ job }: { job: Job }) {
                   <FormDescription>
                     This is your public display name.
                   </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Job Type</FormLabel>
+                  <Select
+                    defaultValue={field.value}
+                    // @ts-expect-error
+                    onValueChange={field.onChange}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a verified email to display" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Job">Job</SelectItem>
+                      <SelectItem value="Internship">Internship</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

@@ -8,6 +8,7 @@ import { EditJobButton } from "@/components/job/editJob";
 import { CompanyJobApplication } from "@/lib/validators/job-application";
 import Link from "next/link";
 import { File } from "lucide-react";
+import { JobAppActions } from "@/components/dashboard/company/jobAppActions";
 
 export const jobcolumns: ColumnDef<Job>[] = [
   {
@@ -128,7 +129,7 @@ export const appcolumns: ColumnDef<CompanyJobApplication>[] = [
     header: "Resume",
     cell: ({ row }) => {
       return (
-        <Link href={row.original.resume}>
+        <Link href={row.original.resume} target="_blank">
           <File />
         </Link>
       );
@@ -137,5 +138,11 @@ export const appcolumns: ColumnDef<CompanyJobApplication>[] = [
   {
     accessorKey: "status",
     header: "Status",
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      return <JobAppActions row={row} />;
+    },
   },
 ];

@@ -1,7 +1,13 @@
-import { getCurrentJob, getStudent, isApplied } from "@/actions/jobs";
+import {
+  getCurrentJob,
+  getStudent,
+  hasAppliedInternship,
+  hasAppliedJob,
+} from "@/actions/jobs";
 import { JobApplyButton } from "@/components/job/application";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "@/components/ui/use-toast";
 import { getUser } from "@/lib/auth";
 
 import dayjs from "dayjs";
@@ -11,7 +17,7 @@ import { notFound } from "next/navigation";
 
 dayjs.extend(relativeTime);
 
-export const revalidate = 10;
+export const revalidate = 0;
 
 interface JobParams {
   params: {
@@ -24,6 +30,11 @@ export default async function Page({ params }: JobParams) {
 
   const session = await getUser();
 
+  if (!job || !session) return notFound();
+
+  const hasApplied = await (hasAppliedJob(params.jobId, session.user.id) ||
+    hasAppliedInternship(params.jobId, session.user.id));
+
   if (!job) return notFound();
 
   return (
@@ -32,28 +43,27 @@ export default async function Page({ params }: JobParams) {
 
       <section
         key={job.jobId}
-        className="container py-10 flex flex-col  border rounded-lg"
+        className="container flex flex-col rounded-lg  border py-10"
       >
-        <div className="flex flex-col-reverse gap-2 md:flex-row justify-between">
+        <div className="flex flex-col-reverse justify-between gap-2 md:flex-row">
           <h2 className="text-4xl font-extrabold">{job.title}</h2>
           <p>{dayjs(JSON.parse(JSON.stringify(job.createdAt))).fromNow()}</p>
         </div>
         <Link
-          className="text-3xl py-2 font-bold"
+          className="py-2 text-3xl font-bold"
           href={`/company/${job.company.companyId}`}
         >
           {job.company.companyName}
         </Link>
         <div className="flex flex-row justify-between">
           <p className="text-2xl font-medium">Location : {job.location}</p>
-          {session && (
-            <>
-              {(await isApplied(job.jobId, session.user.id)) ? (
-                <Button>Applied</Button>
-              ) : (
-                <JobApplyButton jobId={job.jobId} title={job.title} />
-              )}
-            </>
+          {session && session.user.role === "STUDENT" && (
+            <JobApplyButton
+              jobId={job.jobId}
+              title={job.title}
+              userId={session.user.id}
+              hasApplied={hasApplied}
+            />
           )}
         </div>
         <Separator className="my-5" />

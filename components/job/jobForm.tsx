@@ -23,23 +23,30 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 
 const JobForm = () => {
   const router = useRouter();
-  const pathname = usePathname();
 
   const form = useForm<z.infer<typeof newJobSchema>>({
     resolver: zodResolver(newJobSchema),
     defaultValues: {
       title: "",
+      type: "Job",
       location: "",
       details: "",
       salary: 0,
@@ -47,8 +54,15 @@ const JobForm = () => {
   });
 
   const { mutate: createJob } = useMutation({
-    mutationFn: async ({ title, location, salary, details, date }: NewJob) => {
-      const payload: NewJob = { title, location, salary, details, date };
+    mutationFn: async ({
+      title,
+      type,
+      location,
+      salary,
+      details,
+      date,
+    }: NewJob) => {
+      const payload: NewJob = { title, type, location, salary, details, date };
       const { data } = await axios.post("/api/jobs/create", payload);
       return data;
     },
@@ -76,11 +90,12 @@ const JobForm = () => {
 
   async function onSubmit(values: NewJob) {
     form.reset();
+    console.log(values);
     createJob(values);
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-5 md:p-8">
       <div>
         <h3 className="text-lg font-medium">Job Creation Form </h3>
         <p className="text-sm text-muted-foreground">
@@ -95,6 +110,32 @@ const JobForm = () => {
           >
             <FormField
               control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Job Type</FormLabel>
+                  <Select
+                    defaultValue={field.value}
+                    //@ts-expect-error
+                    onValueChange={field.onChange}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a job type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent className="fixed z-50">
+                      <SelectItem value="Job">Job</SelectItem>
+                      <SelectItem value="Internship">Internship</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
               name="title"
               render={({ field }) => (
                 <FormItem>
@@ -106,7 +147,7 @@ const JobForm = () => {
                 </FormItem>
               )}
             />
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <FormField
                 control={form.control}
                 name="location"
