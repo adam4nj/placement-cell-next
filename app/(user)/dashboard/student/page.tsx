@@ -13,8 +13,12 @@ const StudentDashboard = async () => {
 
   return (
     <>
+      <div className="mx-6 mb-3 mt-6 flex justify-between">
+        <div className="text-2xl font-semibold text-black">Applications</div>
+      </div>
+      <Separator className="my-5 bg-black text-2xl font-bold" />
       <Tabs defaultValue="job-applied" className="w-full">
-        <TabsList className="w-[250px] grid grid-cols-2">
+        <TabsList className="grid w-[250px] grid-cols-2">
           <TabsTrigger value="job-applied">Applied Jobs</TabsTrigger>
           <TabsTrigger value="job-replied">Replied Jobs</TabsTrigger>
         </TabsList>
@@ -25,17 +29,17 @@ const StudentDashboard = async () => {
           <DataTable columns={replied_columns} data={replied} />
         </TabsContent>
       </Tabs>
-      <div className="p-10 border border-slate-700 rounded-xl space-y-5">
+      <div className="space-y-5 rounded-xl border border-slate-700 p-10">
         <span className="text-3xl font-bold">Current Jobs</span>
         <Separator className="bg-black" />
-        <Card className="p-5 space-y-4 border-slate-500">
+        <Card className="space-y-4 border-slate-500 p-5">
           <CardTitle className="mx-5 text-lg">Job 1</CardTitle>
           <CardContent>
             Description 1 <br />
             Payment
           </CardContent>
         </Card>
-        <Card className="p-5 space-y-4 border-slate-500">
+        <Card className="space-y-4 border-slate-500 p-5">
           <CardTitle className="mx-5 text-lg">Job 1</CardTitle>
           <CardContent>Description 1</CardContent>
         </Card>

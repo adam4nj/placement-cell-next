@@ -9,8 +9,7 @@ import { revalidatePath } from "next/cache";
 
 export const getAllNotifications = async () => {
   const notification = await db.notification.findMany();
-  revalidatePath("dashboard/admin/notifications");
-  revalidatePath("/jobs");
+  revalidatePath("/dashboard/admin/notifications");
   return notification;
 };
 
@@ -36,7 +35,7 @@ export async function editNotification(id: string, data: NewNotification) {
     },
   });
 
-  revalidatePath("/company/dashboard/notifications");
+  revalidatePath("/dashboard/company/notifications");
 
   return editnotif;
 }
@@ -47,5 +46,5 @@ export async function deleteNotification(id: string) {
       id: id,
     },
   });
-  revalidatePath("/company/dashboard/notifications");
+  revalidatePath("/dashboard/company/notifications");
 }

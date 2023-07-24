@@ -4,6 +4,7 @@ export const registerFormSchema = z
   .object({
     name: z.string().min(1, { message: "Name is required" }),
     role: z.enum(["STUDENT", "COMPANY"]),
+    phone: z.string().regex(/^\d+$/),
     email: z
       .string()
       .email("Invalid Email")

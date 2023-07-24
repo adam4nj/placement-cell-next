@@ -33,18 +33,18 @@ interface SettingsLayoutProps {
 
 export default async function StudentLayout({ children }: SettingsLayoutProps) {
   const session = await getUser();
-  if (!session || session.user.role !== "STUDENT") redirect("/api/auth/signin");
+  if (!session) redirect("/login");
 
   return (
     <>
       <DesktopSidebar items={sideBarItems} />
       <MobileSidebar items={sideBarItems} />
-      <div className="lg:pl-72 m-5">
+      <div className="m-5 lg:pl-72">
         <div className="flex flex-row justify-between pt-5">
           <h6 className="mx-5 text-3xl font-black">
             Dashboard / <CurrentPath className="text-slate-600" />
           </h6>
-          <div className="hidden sm:flex ml-auto items-center space-x-4">
+          <div className="ml-auto hidden items-center space-x-4 sm:flex">
             <span className="hidden sm:block">{session.user.name}</span>
             <ProfileNav session={session} />
           </div>

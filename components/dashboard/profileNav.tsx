@@ -12,15 +12,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Session } from "next-auth";
+
 import { signOut } from "next-auth/react";
+import { Session } from "next-auth";
 
 interface ProfileNavProps {
   session: Session;
 }
 
 export function ProfileNav({ session }: ProfileNavProps) {
-  return (
+  return session.user ? (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
@@ -65,5 +66,9 @@ export function ProfileNav({ session }: ProfileNavProps) {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  ) : (
+    <Avatar className="h-8 w-8">
+      <AvatarFallback>U</AvatarFallback>
+    </Avatar>
   );
 }

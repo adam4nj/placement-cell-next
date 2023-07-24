@@ -35,6 +35,7 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
+import Image from "next/image";
 
 // 2. Define a submit handler.
 async function onSubmit(values: LoginFormType) {
@@ -53,79 +54,87 @@ const StudentLoginPage = () => {
   });
 
   return (
-    <Card className="w-[400px] md:w-[500px] m-auto py-5 items-center justify-center align-middle">
-      <CardHeader className="mx-auto items-center justify-items-center">
-        <CardTitle className="text-xl">Login</CardTitle>
-        <CardDescription>Sign up for an student account</CardDescription>
-      </CardHeader>
+    <div className="h-screen w-full bg-black">
+      <Image
+        src="assets/logo-dark.svg"
+        alt="Placement Cell"
+        width={10}
+        height={10}
+      />
+      <Card className="mx-auto my-10 w-[400px] items-center justify-center py-5 align-middle md:w-[500px]">
+        <CardHeader className="mx-auto items-center justify-items-center">
+          <CardTitle className="text-xl">Login</CardTitle>
+          <CardDescription>Sign in to your respective account</CardDescription>
+        </CardHeader>
 
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardContent className="grid gap-6 grid-cols-1">
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Role</FormLabel>
-                  <Select defaultValue={field.value}>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <CardContent className="grid grid-cols-1 gap-6">
+              <FormField
+                control={form.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Role</FormLabel>
+                    <Select defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select your role" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="STUDENT">Student</SelectItem>
+                        <SelectItem value="COMPANY">Company</SelectItem>
+                        <SelectItem value="ADMIN">Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
                     <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your role" />
-                      </SelectTrigger>
+                      <Input
+                        className="flex"
+                        placeholder="Your Username"
+                        {...field}
+                      />
                     </FormControl>
-                    <SelectContent>
-                      <SelectItem value="STUDENT">Student</SelectItem>
-                      <SelectItem value="COMPANY">Company</SelectItem>
-                      <SelectItem value="ADMIN">Admin</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="flex"
-                      placeholder="Your Username"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="flex"
-                      placeholder="Your Password"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </CardContent>
-          <CardFooter>
-            <Button type="submit" className="w-1/3 m-auto">
-              Login
-            </Button>
-          </CardFooter>
-        </form>
-      </Form>
-    </Card>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="flex"
+                        placeholder="Your Password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+            <CardFooter>
+              <Button type="submit" className="m-auto w-1/3">
+                Login
+              </Button>
+            </CardFooter>
+          </form>
+        </Form>
+      </Card>
+    </div>
   );
 };
 

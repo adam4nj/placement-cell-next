@@ -2,12 +2,11 @@
 
 import { db } from "@/lib/db";
 import { Status } from "@prisma/client";
-import { RegisterFormType } from "@/lib/validators/auth";
-import { registerCompany, registerStudent } from "@/lib/user";
 import * as bcrypt from "bcrypt";
 import { User } from "@/lib/validators/usertable";
 import { revalidatePath } from "next/cache";
 import { Feedback, feedbackSchema } from "@/lib/validators/feedback";
+import { Session } from "next-auth";
 
 export async function bcryptHash(password: string) {
   const pw = await bcrypt.hash(password, 12);
@@ -19,12 +18,27 @@ export async function bcryptCompare(password: string, hash: string) {
   return pw;
 }
 
-export async function registerStudentAction(body: RegisterFormType) {
-  await registerStudent(body);
+export async function verifiedUser(session: Session | null) {
+  if (session) {
+    const user = await db.user.findFirst({
+      where: {
+        id: session.user.id,
+      },
+    });
+
+    return !!user?.verifyDoc;
+  }
+
+  return;
 }
 
-export async function registerCompanyAction(body: RegisterFormType) {
-  await registerCompany(body);
+export async function getUserStatus(session: Session | null) {
+  const user = await db.user.findFirst({
+    where: {
+      id: session?.user.id,
+    },
+  });
+  if (user) return user.status;
 }
 
 export async function changeUserStatus(id: string, status: Status) {

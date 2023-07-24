@@ -1,10 +1,10 @@
 import { db } from "@/lib/db";
 
 import {
+  RegisterFormType,
   firstName,
   lastName,
   registerFormSchema,
-  RegisterFormType,
 } from "@/lib/validators/auth";
 
 export const registerStudent = async (body: RegisterFormType) => {
@@ -50,8 +50,7 @@ export const registerStudent = async (body: RegisterFormType) => {
 };
 
 export const registerCompany = async (body: RegisterFormType) => {
-  const { name, role, email, username, password } =
-    registerFormSchema.parse(body);
+  const { role, email, username, password } = registerFormSchema.parse(body);
 
   const exists = await db.user.findUnique({
     where: {
@@ -63,21 +62,24 @@ export const registerCompany = async (body: RegisterFormType) => {
     throw new Error("Email already exists");
   }
 
-  const companyUser = await db.user.create({
-    data: {
-      role,
-      email,
-      username,
-      password,
-      company: {
-        create: {
-          companyName: name,
-          email: email,
-          status: "Pending",
+  try {
+    const companyUser = await db.user.create({
+      data: {
+        role,
+        email,
+        username,
+        password,
+        company: {
+          create: {
+            companyName: username,
+            email: email,
+            status: "Pending",
+          },
         },
       },
-    },
-  });
-
-  return companyUser;
+    });
+    return companyUser;
+  } catch (e) {
+    throw e;
+  }
 };

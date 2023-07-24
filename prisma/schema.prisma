@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
 }
 
 datasource db {
@@ -61,6 +62,7 @@ model User {
   username      String         @unique
   password      String
   email         String?        @unique
+  phone         String?
   emailVerified DateTime       @default(now())
   image         String?
   verifyDoc     String?
@@ -86,6 +88,7 @@ model Company {
   companyName String
   email       String
   address     String? @db.Text
+  phone       String?
   status      Status
   user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String  @unique
@@ -125,12 +128,14 @@ model Job {
   endDate           DateTime?           @db.Date
   createdAt         DateTime            @default(now())
   details           String?             @db.Text
+  orderId           String?
   company           Company             @relation(fields: [companyId], references: [companyId], onDelete: Cascade)
   companyId         String
   JobApplication    JobApplication[]
   InternApplication InternApplication[]
 
   @@index([companyId])
+  @@fulltext([title, details])
 }
 
 model JobApplication {
@@ -166,10 +171,11 @@ model InternApplication {
 }
 
 model Intern {
-  internId    String            @id
+  internId    String            @id @default(cuid())
   paymentId   String?
   internapp   InternApplication @relation(fields: [internappId], references: [internAppId])
   internappId String            @unique
+  Payments    Payments[]
 
   @@index([internappId])
 }
@@ -196,4 +202,14 @@ model Notification {
   userId    String
 
   @@index([userId])
+}
+
+model Payments {
+  id            String  @id @default(cuid())
+  paymentLinkId String?
+  amount        Int?
+  intern        Intern  @relation(fields: [internId], references: [internId], onDelete: Cascade)
+  internId      String
+
+  @@index([internId])
 }

@@ -1,8 +1,7 @@
 import { useSession, signIn, signOut } from "next-auth/react";
-import Image from "next/image";
 import { Button } from "./ui/button";
-import profileIcon from "@/public/assets/profile.svg";
 import { cn } from "@/lib/utils";
+import { ProfileNav } from "./dashboard/profileNav";
 
 export default function SignInButton({
   className,
@@ -12,16 +11,11 @@ export default function SignInButton({
   if (session && session.user) {
     return (
       <>
-        <div className={cn("flex flex-row space-x-4 m-auto", className)}>
-          <p className="mt-3 text-center text-sm font-medium align-middle">
-            {session?.user?.username}
+        <div className={cn("m-auto flex flex-row space-x-4", className)}>
+          <p className="mt-2 text-center text-sm font-bold text-white">
+            {session.user.username} - {session.user.role}
           </p>
-          <Button
-            onClick={() => signOut()}
-            className="text-sm text-white bg-gray-600 rounded-xl shadow hover:bg-gray-800"
-          >
-            Sign Out
-          </Button>
+          <ProfileNav session={session} />
         </div>
       </>
     );
@@ -30,9 +24,9 @@ export default function SignInButton({
     <>
       <Button
         onClick={() => signIn()}
-        className="text-sm text-white bg-gray-600 rounded-xl shadow hover:bg-gray-800"
+        className="rounded-xl bg-gray-600 text-sm text-white shadow hover:bg-gray-500"
       >
-        Sign In
+        Login
       </Button>
     </>
   );

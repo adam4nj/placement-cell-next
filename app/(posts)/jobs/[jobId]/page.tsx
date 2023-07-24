@@ -1,13 +1,10 @@
 import {
   getCurrentJob,
-  getStudent,
   hasAppliedInternship,
   hasAppliedJob,
 } from "@/actions/jobs";
 import { JobApplyButton } from "@/components/job/application";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { toast } from "@/components/ui/use-toast";
 import { getUser } from "@/lib/auth";
 
 import dayjs from "dayjs";

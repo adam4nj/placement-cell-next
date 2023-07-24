@@ -6,6 +6,11 @@ import { signIn, useSession } from "next-auth/react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerFormSchema, RegisterFormType } from "@/lib/validators/auth";
+import { useForm } from "react-hook-form";
+import { useEffect } from "react";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,23 +31,37 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
 import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { registerStudentAction } from "@/actions/user";
-import { useEffect } from "react";
-
-// 2. Define a submit handler.
-async function onSubmit(values: RegisterFormType) {
-  console.log(values);
-  await registerStudentAction(values);
-  signIn();
-}
 
 const StudentRegisterPage = () => {
+  const { mutate: registerStudent } = useMutation({
+    mutationFn: async ({
+      name,
+      role,
+      email,
+      phone,
+      username,
+      password,
+      confirmPassword,
+    }: RegisterFormType) => {
+      const payload: RegisterFormType = {
+        name,
+        role,
+        email,
+        phone,
+        username,
+        password,
+        confirmPassword,
+      };
+      const { data } = await axios.post("/api/register/student", payload);
+      return data;
+    },
+  });
   const form = useForm<RegisterFormType>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
+      name: "",
+      phone: "",
       role: "STUDENT",
       email: "",
       username: "",
@@ -51,17 +70,24 @@ const StudentRegisterPage = () => {
     },
   });
 
-  const { status } = useSession();
+  async function onSubmit(values: RegisterFormType) {
+    console.log(values);
+    registerStudent(values);
+    signIn();
+  }
+
+  const { data: session, status } = useSession();
   const { pending } = useFormStatus();
+  const router = useRouter();
 
   useEffect(() => {
     if (status === "authenticated") {
-      signIn();
+      router.push(`/dashboard/${session.user.role.toLowerCase()}`);
     }
   }, [status]);
 
   return (
-    <Card className="w-[400px] md:w-[800px] m-auto py-5 items-center justify-center align-middle">
+    <Card className="m-auto w-[400px] items-center justify-center py-5 align-middle md:w-[800px]">
       <CardHeader className="mx-auto items-center justify-items-center">
         <CardTitle className="text-xl">Register</CardTitle>
         <CardDescription>Sign up for an student account</CardDescription>
@@ -69,7 +95,7 @@ const StudentRegisterPage = () => {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          <CardContent className="grid gap-6 grid-cols-1 md:grid-cols-2">
+          <CardContent className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <FormField
               control={form.control}
               name="name"
@@ -84,6 +110,26 @@ const StudentRegisterPage = () => {
                     />
                   </FormControl>
                   <FormDescription>Enter your full name.</FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="flex"
+                      placeholder="Your Username"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    This is your school registration id.
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -110,20 +156,18 @@ const StudentRegisterPage = () => {
             />
             <FormField
               control={form.control}
-              name="username"
+              name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>Phone</FormLabel>
                   <FormControl>
                     <Input
                       className="flex"
-                      placeholder="Your Username"
+                      placeholder="Your Phone Number"
                       {...field}
                     />
                   </FormControl>
-                  <FormDescription>
-                    This is your school registration id.
-                  </FormDescription>
+                  <FormDescription>This is your phone number.</FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
@@ -172,7 +216,7 @@ const StudentRegisterPage = () => {
           <CardFooter>
             <Button
               type="submit"
-              className={pending ? "bg-slate-500 w-1/3 m-auto" : "w-1/3 m-auto"}
+              className={pending ? "m-auto w-1/3 bg-slate-500" : "m-auto w-1/3"}
               disabled={pending}
             >
               Submit

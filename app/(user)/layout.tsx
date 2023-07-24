@@ -1,11 +1,18 @@
-export default function UserLayout({
+import { getUser } from "@/lib/auth";
+import { redirect } from "next/navigation";
+
+export default async function UserLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <div>
-      <div className="h-fit">{children}</div>
-    </div>
+  const session = await getUser();
+
+  if (!session) return redirect("/");
+
+  return session.user.status === "Accepted" ? (
+    <div>{children}</div>
+  ) : (
+    redirect("/verifyuser")
   );
 }

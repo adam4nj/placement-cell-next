@@ -13,12 +13,16 @@ import Link from "next/link";
 import EditNotifButton from "@/components/notification/editNotifButton";
 import DeleteNotifButton from "@/components/notification/deleteNotifButton";
 import { NotificationWithDate } from "@/lib/validators/notification";
+import { Separator } from "@/components/ui/separator";
 
 const NotificationsData = async () => {
   const notifications = (await getAllNotifications()) as NotificationWithDate[];
   return (
-    <div>
-      Notifications
+    <>
+      <div className="mx-6 mb-3 mt-6 flex justify-between">
+        <div className="text-2xl font-semibold text-black">Notifications</div>
+      </div>
+      <Separator className="my-5 bg-black" />
       <Table>
         <TableCaption>A list of your recent invoices.</TableCaption>
         <TableHeader>
@@ -60,7 +64,7 @@ const NotificationsData = async () => {
           )}
         </TableBody>
       </Table>
-    </div>
+    </>
   );
 };
 

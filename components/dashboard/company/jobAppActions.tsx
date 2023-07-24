@@ -135,7 +135,6 @@ export function JobAppActions<TData>({ row }: JobStatusProps<TData>) {
                       <Select
                         defaultValue={job.status}
                         value={field.value}
-                        //@ts-expect-error
                         onValueChange={field.onChange}
                       >
                         <FormControl>

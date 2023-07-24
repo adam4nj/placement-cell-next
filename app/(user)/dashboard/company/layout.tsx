@@ -14,16 +14,16 @@ export const metadata: Metadata = {
 
 const sidebarItems = [
   {
+    title: "Overview",
+    href: "/dashboard/company",
+  },
+  {
     title: "Jobs",
     href: "/dashboard/company/jobs",
   },
   {
-    title: "Internships",
-    href: "/dashboard/company/internships",
-  },
-  {
-    title: "Notifications",
-    href: "/dashboard/company/notifications",
+    title: "Applications",
+    href: "/dashboard/company/applications",
   },
   {
     title: "Feedback",
@@ -37,7 +37,7 @@ interface CompanyLayoutProps {
 
 export default async function CompanyLayout({ children }: CompanyLayoutProps) {
   const session = await getUser();
-  if (!session || session.user.role !== "COMPANY") redirect("/api/auth/signin");
+  if (!session) redirect("/login");
   return (
     <>
       <DesktopSidebar items={sidebarItems} />

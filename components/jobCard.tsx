@@ -25,11 +25,16 @@ interface JobCardProps {
 
 export default async function JobCard({ job }: JobCardProps) {
   return (
-    <Card className="shadow hover:bg-gray-100 sm:py-3" key={job.jobId}>
-      <CardHeader className="py-2 flex m-auto sm:flex-col md:flex-row lg:flex-col">
+    <Card
+      className="border-2 border-slate-500 py-1 drop-shadow-lg transition-transform duration-300 hover:-translate-y-2 hover:translate-x-1"
+      key={job.jobId}
+    >
+      <CardHeader className="m-auto flex py-1 sm:flex-col md:flex-row lg:flex-col">
         <div className="flex-auto justify-between py-3 md:py-0 lg:py-2">
-          <CardTitle className="text-md sm:text-lg">{job.title}</CardTitle>
-          <CardDescription className="text-sm sm:text-md">
+          <CardTitle className="text-md font-bold sm:text-lg">
+            {job.title}
+          </CardTitle>
+          <CardDescription className="sm:text-md text-sm">
             {job.company.companyName}
           </CardDescription>
         </div>
@@ -49,7 +54,7 @@ export default async function JobCard({ job }: JobCardProps) {
         <Link href={`/jobs/${job.jobId}`}>
           <Button
             variant="outline"
-            className="md:w-auto lg:py-0.5 text-xs md:text-sm border-slate-700"
+            className="border-slate-700 text-xs hover:bg-slate-600 hover:text-white active:bg-slate-800 md:w-auto md:text-xs"
           >
             Read More
           </Button>

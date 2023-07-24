@@ -40,7 +40,7 @@ interface AdminLayoutProps {
 
 export default async function AdminLayout({ children }: AdminLayoutProps) {
   const session = await getUser();
-  if (!session || session.user.role !== "STUDENT") redirect("/api/auth/signin");
+  if (!session) redirect("/login");
 
   return (
     <>

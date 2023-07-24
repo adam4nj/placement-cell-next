@@ -1,16 +1,19 @@
 "use client";
 
+import { Session } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { ProfileNav } from "./dashboard/profileNav";
 
-export default function Hero() {
+export default function Hero({ session }: { session: Session | null }) {
   const [state, setState] = useState(false);
 
   const navigation = [
     { title: "About", path: "/about" },
+    { title: "Jobs", path: "/jobs" },
     { title: "Contact", path: "/contact" },
-    { title: "Admin", path: "/admin" },
+    { title: "Admin", path: "/dashboard/admin" },
   ];
 
   useEffect(() => {
@@ -71,7 +74,7 @@ export default function Hero() {
 
   return (
     <div className="relative">
-      <div className="bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-gray-700 via-gray-900 to-black transition-all delay-300 hover:from-gray-600 hover:via-gray-800 hover:to-black">
+      <div className="h-screen bg-[url('/assets/hero2.jpg')] bg-cover bg-fixed bg-center bg-blend-darken">
         <header>
           <div className={`md:hidden ${state ? "mx-2 pb-5" : "hidden"}`}>
             <Brand />
@@ -95,7 +98,7 @@ export default function Hero() {
                     return (
                       <li
                         key={idx}
-                        className="text-md text-gray-300 hover:text-gray-400"
+                        className="text-md font-medium text-white hover:text-gray-200"
                       >
                         <Link href={item.path} className="block">
                           {item.title}
@@ -104,12 +107,16 @@ export default function Hero() {
                     );
                   })}
                   <li>
-                    <Link
-                      href="/login"
-                      className="flex items-center justify-center gap-x-1 rounded-full border bg-transparent px-4 py-2 font-medium text-white duration-150 hover:bg-slate-100 hover:text-black active:bg-gray-400 active:text-slate-800 md:inline-flex"
-                    >
-                      Login
-                    </Link>
+                    {!session ? (
+                      <Link
+                        href="/login"
+                        className="flex items-center justify-center gap-x-1 rounded-full border bg-transparent px-4 py-2 font-medium text-white duration-150 hover:bg-slate-100 hover:text-black active:bg-gray-400 active:text-slate-800 md:inline-flex"
+                      >
+                        Login
+                      </Link>
+                    ) : (
+                      <ProfileNav session={session} />
+                    )}
                   </li>
                 </ul>
               </div>
@@ -117,19 +124,25 @@ export default function Hero() {
           </nav>
         </header>
         <section className="relative">
-          <div className="relative z-10 mx-auto max-w-screen-xl px-4 pb-28 pt-20 md:px-8">
-            <div className="mx-auto max-w-4xl space-y-5 text-center">
-              <h2 className="mx-auto text-4xl font-bold text-white md:text-5xl md:leading-relaxed">
-                Build yourselves a great career with{" "}
-                <span className="font-extrabold">Placement Cell JMC</span>
+          <div className="relative z-10 mx-auto max-w-screen-xl px-4 pb-28 pt-10 md:px-8">
+            <div className="mx-auto max-w-4xl space-y-3 text-center">
+              <h2
+                className="mx-auto stroke-black text-4xl
+               font-black text-white md:text-7xl md:leading-relaxed"
+              >
+                Build yourselves a great career with Placement Cell JMC
               </h2>
-              <p className=" mx-auto max-w-2xl text-gray-400">
+              <p className="mx-auto max-w-2xl text-base text-slate-100  md:text-xl">
                 An efficient way for creating and managing job applications
               </p>
               <div className="items-center justify-center gap-5 sm:flex">
                 <Link
                   className="mt-3 flex w-full items-center justify-center gap-x-2 rounded-lg bg-sky-500 px-4 py-2.5 text-sm font-medium text-white duration-150 hover:bg-sky-400 active:bg-sky-600 sm:mt-0 sm:w-auto"
-                  href="/register"
+                  href={
+                    session
+                      ? `dashboard/${session.user.role.toLowerCase()}`
+                      : "/register"
+                  }
                 >
                   Get started
                   <svg

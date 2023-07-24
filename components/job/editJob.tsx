@@ -105,7 +105,6 @@ export function EditJobButton({ job }: { job: Job }) {
                   <FormLabel>Job Type</FormLabel>
                   <Select
                     defaultValue={field.value}
-                    // @ts-expect-error
                     onValueChange={field.onChange}
                   >
                     <FormControl>

@@ -129,7 +129,6 @@ export function UserActions<TData>({ row }: VerifyUserProps<TData>) {
                       <Select
                         defaultValue={user.status}
                         value={field.value}
-                        //@ts-expect-error
                         onValueChange={field.onChange}
                       >
                         <FormControl>

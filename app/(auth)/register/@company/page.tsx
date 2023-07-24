@@ -1,13 +1,14 @@
 "use client";
 
+import { experimental_useFormStatus as useFormStatus } from "react-dom";
+
 import { signIn, useSession } from "next-auth/react";
 
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { registerFormSchema, RegisterFormType } from "@/lib/validators/auth";
-import { registerCompanyAction } from "@/actions/user";
+import { RegisterFormType, registerFormSchema } from "@/lib/validators/auth";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,21 +31,46 @@ import {
 } from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
-
-import { experimental_useFormStatus as useFormStatus } from "react-dom";
-
-// 2. Define a submit handler.
-async function onSubmit(values: RegisterFormType) {
-  console.log(values);
-  await registerCompanyAction(values);
-  signIn();
-}
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const CompanyRegisterPage = () => {
+  const { mutate: registerCompany } = useMutation({
+    mutationFn: async ({
+      name,
+      role,
+      email,
+      phone,
+      username,
+      password,
+      confirmPassword,
+    }: RegisterFormType) => {
+      const payload: RegisterFormType = {
+        name,
+        role,
+        email,
+        phone,
+        username,
+        password,
+        confirmPassword,
+      };
+      const { data } = await axios.post("/api/register/company", payload);
+      return data;
+    },
+  });
+
+  async function onSubmit(values: RegisterFormType) {
+    console.log(values);
+    registerCompany(values);
+    signIn();
+  }
   const form = useForm<RegisterFormType>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
+      name: "",
       role: "COMPANY",
+      phone: "",
       email: "",
       username: "",
       password: "",
@@ -52,26 +78,42 @@ const CompanyRegisterPage = () => {
     },
   });
 
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const { pending } = useFormStatus();
+  const router = useRouter();
 
   useEffect(() => {
     if (status === "authenticated") {
-      signIn();
+      router.push(`/dashboard/${session.user.role.toLowerCase()}`);
     }
   }, [status]);
 
   return (
     <div>
-      <Card className="w-[400px] md:w-[800px] m-auto py-5 items-center justify-center align-middle">
+      <Card className="m-auto w-[400px] items-center justify-center py-5 align-middle md:w-[800px]">
         <CardHeader className="mx-auto items-center justify-items-center">
           <CardTitle className="text-xl">Register</CardTitle>
           <CardDescription>Sign up for an company account</CardDescription>
         </CardHeader>
-
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <CardContent className="grid gap-6 grid-cols-1 md:grid-cols-2">
+            <CardContent className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Company Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      This is your companys public display name.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="username"
@@ -82,7 +124,7 @@ const CompanyRegisterPage = () => {
                       <Input placeholder="Your Username" {...field} />
                     </FormControl>
                     <FormDescription>
-                      This is your companys public display name.
+                      This is your companys username.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -99,6 +141,22 @@ const CompanyRegisterPage = () => {
                     </FormControl>
                     <FormDescription>
                       This is your organizations email id.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Your Company Phone" {...field} />
+                    </FormControl>
+                    <FormDescription>
+                      This is your companys phone number.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -141,9 +199,7 @@ const CompanyRegisterPage = () => {
               <Button
                 type="submit"
                 className={
-                  pending
-                    ? "bg-slate-500 w-1/3 m-auto"
-                    : "bg-slate-900 w-1/3 m-auto"
+                  pending ? "m-auto w-1/3 bg-slate-500" : "m-auto w-1/3"
                 }
                 disabled={pending}
               >

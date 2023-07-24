@@ -2,12 +2,15 @@ import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { getUser } from "@/lib/auth";
 import Image from "next/image";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const session = await getUser();
+
   return (
     <>
-      <Hero />
+      <Hero session={session} />
       <div className="space-y-5 bg-slate-900">
         <div className="p-5 text-center text-3xl font-semibold italic text-slate-400">
           Our Partners
@@ -23,7 +26,7 @@ export default function HomePage() {
 
         <div className="mb-20 flex flex-col-reverse md:flex-row">
           <Card className="mx-auto flex w-[300px] flex-col justify-center space-y-8 rounded-xl border-0 bg-gradient-to-bl from-white to-slate-400 p-10 md:mx-10 md:w-[500px]">
-            <blockquote className="text-center">
+            <blockquote className="text-justify indent-8">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit.
               Vestibulum rhoncus aliquam suscipit. Suspendisse justo lectus,
               rutrum at viverra eget, sollicitudin vel enim. Etiam euismod

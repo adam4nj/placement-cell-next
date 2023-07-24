@@ -1,6 +1,11 @@
 "use server";
 
-import { jobSchema, type Job } from "@/lib/validators/job";
+import {
+  jobSchema,
+  type Job,
+  newJobSchema,
+  NewJob,
+} from "@/lib/validators/job";
 import { Prisma, Status } from "@prisma/client";
 import { db } from "@/lib/db";
 import { deleteJobFromDb } from "@/lib/job";
@@ -11,9 +16,45 @@ import {
   StudentProfileType,
   studentProfileSchema,
 } from "@/lib/validators/profile";
+import { Session } from "next-auth";
+
+export async function getAllPosts(searchParams: string) {
+  const allPosts = await db.job.findMany({
+    orderBy: {
+      _relevance: {
+        fields: ["title", "details"],
+        search: searchParams,
+        sort: "asc",
+      },
+    },
+    include: {
+      company: true,
+    },
+  });
+
+  return allPosts;
+}
 
 export async function getAllJobs() {
   const allJobs = await db.job.findMany({
+    where: {
+      type: "Job",
+    },
+    include: {
+      company: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return allJobs;
+}
+
+export async function getAllInternships() {
+  const allJobs = await db.job.findMany({
+    where: {
+      type: "Internship",
+    },
     include: {
       company: true,
     },
@@ -45,6 +86,32 @@ export async function getStudent() {
 }
 
 export type StudentDBType = Prisma.PromiseReturnType<typeof getStudent>;
+
+export async function createJob(session: Session | null, data: NewJob) {
+  const { title, type, location, salary, details, date } =
+    newJobSchema.parse(data);
+
+  if (date && session) {
+    const job = await db.job.create({
+      data: {
+        title,
+        type,
+        location,
+        salary,
+        details,
+        startDate: date.from,
+        endDate: date.to,
+        company: {
+          connect: {
+            userId: session.user.id,
+          },
+        },
+      },
+    });
+    revalidatePath("/dashboard/company/jobs");
+    return job;
+  }
+}
 
 export async function editJob(data: Job) {
   const { jobId, title, type, location, salary, details } =
@@ -112,11 +179,11 @@ export const changeJobAppStatus = async (jobAppId: string, status: Status) => {
 };
 
 export const getStudentJobs = async () => {
-  const user = await getUser();
+  const session = await getUser();
   const appliedJobs = await db.jobApplication.findMany({
     where: {
       student: {
-        userId: user?.user.id,
+        userId: session?.user.id,
       },
     },
     include: {
@@ -179,6 +246,44 @@ export const getAllInternApplications = async () => {
 
   return allapps;
 };
+
+export async function getInterns() {
+  const session = await getUser();
+  const interns = await db.intern.findMany({
+    where: {
+      internapp: {
+        job: {
+          company: {
+            userId: session?.user.id,
+          },
+        },
+      },
+    },
+    include: {
+      internapp: {
+        include: {
+          job: true,
+          student: true,
+        },
+      },
+    },
+  });
+  return interns;
+}
+
+export async function getStudentInternships() {
+  const session = await getUser();
+  const myjobs = await db.intern.findMany({
+    where: {
+      internapp: {
+        student: {
+          userId: session?.user.id,
+        },
+      },
+    },
+  });
+  return myjobs;
+}
 
 export const deleteJobApplication = async (id: string) => {
   const deletejobapp = db.jobApplication.delete({

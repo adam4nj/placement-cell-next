@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Raleway } from "next/font/google";
+import { Red_Hat_Display } from "next/font/google";
 import QueryProvider from "./providers";
 ("./providers");
 import { Toaster } from "@/components/ui/toaster";
@@ -9,8 +9,7 @@ export const metadata = {
   description: "Placement Cell of Dr. John Mathai Centre",
 };
 
-const leagueSpartan = Raleway({
-  weight: "700",
+const leagueSpartan = Red_Hat_Display({
   style: "normal",
   subsets: ["latin"],
 });

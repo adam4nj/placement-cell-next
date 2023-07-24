@@ -48,6 +48,7 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           username: user.username,
           role: user.role,
+          status: user.status,
         };
       },
     }),
@@ -62,6 +63,7 @@ export const authOptions: NextAuthOptions = {
         session.user.username = token.username;
         session.user.image = token.picture;
         session.user.role = token.role;
+        session.user.status = token.status;
       }
 
       return session;
@@ -87,10 +89,11 @@ export const authOptions: NextAuthOptions = {
         username: dbUser.username,
         picture: dbUser.image,
         role: dbUser.role,
+        status: dbUser.status,
       };
     },
     redirect() {
-      return "/";
+      return "/verifyuser";
     },
   },
 };

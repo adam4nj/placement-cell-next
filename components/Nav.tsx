@@ -4,14 +4,23 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import SignInButton from "./SignInButton";
+import Search from "./searchBox";
+import { useSession } from "next-auth/react";
 
 export default function Navbar() {
   const [state, setState] = useState(false);
+  const { data: session } = useSession();
 
   const navigation = [
-    { title: "About", path: "/about" },
+    { title: "Home", path: "/" },
+
+    session
+      ? {
+          title: "Dashboard",
+          path: `/dashboard/${session.user.role.toLowerCase()}`,
+        }
+      : { title: "About", path: "/about" },
     { title: "Jobs", path: "/jobs" },
-    { title: "Admin", path: "/admin" },
   ];
 
   useEffect(() => {
@@ -25,7 +34,7 @@ export default function Navbar() {
     <div className="flex items-center justify-between py-3 md:block">
       <a href="/">
         <Image
-          src="assets/logo-light.svg"
+          src="assets/logo-dark.svg"
           width={130}
           height={70}
           alt="Placement Cell Logo"
@@ -56,7 +65,7 @@ export default function Navbar() {
               viewBox="0 0 24 24"
               strokeWidth={1.5}
               stroke="currentColor"
-              className="w-6 h-6"
+              className="h-6 w-6"
             >
               <path
                 strokeLinecap="round"
@@ -71,31 +80,32 @@ export default function Navbar() {
   );
 
   return (
-    <div className="relative">
+    <div className="sticky top-0 z-40 rounded-b-xl border-b-2 border-slate-600 bg-slate-800">
       <header>
         <div className={`md:hidden ${state ? "mx-2 pb-5" : "hidden"}`}>
           <Brand />
         </div>
         <nav
-          className={`pb-5 md:text-sm ${
+          className={`md:text-sm ${
             state
-              ? "absolute z-20 top-0 inset-x-0 bg-slate-100 rounded-xl mx-2 mt-2 md:mx-0 md:mt-0 md:relative md:bg-transparent border-slate-400 drop-shadow-lg"
+              ? "absolute inset-x-0 top-0 z-20 mx-2 mt-2 rounded-xl border-slate-400 bg-slate-100 drop-shadow-lg md:relative md:mx-0 md:mt-0 md:bg-transparent"
               : ""
           }`}
         >
-          <div className="gap-x-14 items-center max-w-screen-xl mx-auto px-4 md:flex md:px-8">
+          <div className="mx-auto max-w-screen-xl items-center gap-x-14 px-4 md:flex">
             <Brand />
+
             <div
-              className={`flex-1 items-center mt-8 md:mt-0 md:flex ${
+              className={`mt-8 flex-1 items-center md:mt-0 md:flex ${
                 state ? "block" : "hidden"
               } `}
             >
-              <ul className="flex-1 justify-end items-center space-y-6 md:flex md:space-x-6 md:space-y-0">
+              <ul className="flex-1 items-center justify-end space-y-6 md:flex md:space-x-6 md:space-y-0">
                 {navigation.map((item, idx) => {
                   return (
                     <li
                       key={idx}
-                      className="text-md text-slate-900 hover:text-slate-700"
+                      className="text-md text-slate-200 hover:text-white"
                     >
                       <Link href={item.path} className="block">
                         {item.title}
