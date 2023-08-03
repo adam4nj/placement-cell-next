@@ -1,5 +1,6 @@
 "use server";
 
+import { getUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import {
   NewNotification,
@@ -21,6 +22,21 @@ export const getCurrentNotification = async (id: string) => {
   });
   return notification;
 };
+
+export async function addNotification(data: NewNotification) {
+  const session = await getUser();
+  if (session) {
+    const note = await db.notification.create({
+      data: {
+        title: data.title,
+        content: data.title,
+        link: data.link,
+        userId: session?.user.id,
+      },
+    });
+    return note;
+  }
+}
 
 export async function editNotification(id: string, data: NewNotification) {
   const { title, content, link } = newNotificationSchema.parse(data);

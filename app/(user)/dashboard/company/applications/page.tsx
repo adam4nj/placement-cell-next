@@ -16,7 +16,7 @@ const InternshipPage = async () => {
   return (
     <>
       <div className="mx-6 mb-3 mt-6 flex justify-between">
-        <div className="text-2xl font-semibold text-black">Applications</div>
+        <div className="text-2xl font-bold text-black">Applications</div>
       </div>
       <Separator className="my-5 bg-black" />
 

@@ -18,47 +18,104 @@ import {
 } from "@/lib/validators/profile";
 import { Session } from "next-auth";
 
-export async function getAllPosts(searchParams: string) {
-  const allPosts = await db.job.findMany({
-    orderBy: {
-      _relevance: {
-        fields: ["title", "details"],
-        search: searchParams,
-        sort: "asc",
+export async function getAllPosts(search?: string) {
+  if (search) {
+    const posts = await db.job.findMany({
+      where: {
+        OR: [
+          {
+            title: {
+              search: search ?? "",
+            },
+            details: {
+              search: search ?? "",
+            },
+          },
+        ],
       },
-    },
-    include: {
-      company: true,
-    },
-  });
+      orderBy: {
+        _relevance: {
+          fields: ["title", "details"],
+          search: search,
+          sort: "desc",
+        },
+      },
+      include: {
+        company: true,
+      },
+    });
 
-  return allPosts;
+    return posts;
+  } else {
+    const allPosts = await db.job.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+      include: {
+        company: true,
+      },
+    });
+    return allPosts;
+  }
 }
 
-export async function getAllJobs() {
+export async function getCompanyJobs() {
+  const session = await getUser();
   const allJobs = await db.job.findMany({
     where: {
       type: "Job",
-    },
-    include: {
-      company: true,
+      company: {
+        userId: session?.user.id,
+      },
     },
     orderBy: {
       createdAt: "desc",
     },
   });
+  revalidatePath("/dashboard/company/jobs");
   return allJobs;
 }
 
-export async function getAllInternships() {
+export async function isDuplicate(date: Date | null) {
+  const session = await getUser();
+
+  if (date) {
+    const duplicate =
+      (await db.jobApplication.findFirst({
+        where: {
+          student: {
+            userId: session?.user.id,
+          },
+          job: {
+            driveDate: date,
+          },
+        },
+      })) ||
+      (await db.internApplication.findFirst({
+        where: {
+          student: {
+            userId: session?.user.id,
+          },
+          job: {
+            driveDate: date,
+          },
+        },
+      }));
+    return !!duplicate;
+  }
+}
+
+export async function getCompanyInternships() {
+  const session = await getUser();
   const allJobs = await db.job.findMany({
     where: {
       type: "Internship",
-    },
-    include: {
-      company: true,
+      company: {
+        userId: session?.user.id,
+      },
     },
   });
+  revalidatePath("/dashboard/company/jobs");
   return allJobs;
 }
 
@@ -74,21 +131,10 @@ export async function getCurrentJob(id: string) {
   return currentJob;
 }
 
-export async function getStudent() {
-  const session = await getUser();
-
-  const student = await db.student.findFirst({
-    where: {
-      userId: session?.user.id,
-    },
-  });
-  return student!;
-}
-
 export type StudentDBType = Prisma.PromiseReturnType<typeof getStudent>;
 
 export async function createJob(session: Session | null, data: NewJob) {
-  const { title, type, location, salary, details, date } =
+  const { title, type, location, salary, details, date, driveDate } =
     newJobSchema.parse(data);
 
   if (date && session) {
@@ -101,6 +147,7 @@ export async function createJob(session: Session | null, data: NewJob) {
         details,
         startDate: date.from,
         endDate: date.to,
+        driveDate,
         company: {
           connect: {
             userId: session.user.id,
@@ -169,13 +216,39 @@ export const changeJobAppStatus = async (jobAppId: string, status: Status) => {
       jobAppId,
     },
     data: {
-      status: status,
+      status,
     },
   });
 
   revalidatePath("/dashboard/company/jobs");
 
   return { jobAppId };
+};
+
+export const changeInternAppStatus = async (
+  internAppId: string,
+  status: Status
+) => {
+  const application = await db.internApplication.update({
+    where: {
+      internAppId,
+    },
+    data: {
+      status,
+    },
+  });
+
+  revalidatePath("/dashboard/company/jobs");
+
+  if (application.status === "Accepted") {
+    await db.intern.create({
+      data: {
+        internappId: application.internAppId,
+      },
+    }); //unique constraint error
+  }
+
+  return { internAppId };
 };
 
 export const getStudentJobs = async () => {
@@ -262,12 +335,17 @@ export async function getInterns() {
     include: {
       internapp: {
         include: {
-          job: true,
+          job: {
+            include: {
+              company: true,
+            },
+          },
           student: true,
         },
       },
     },
   });
+
   return interns;
 }
 
@@ -326,3 +404,14 @@ export const editProfile = async (data: StudentProfileType) => {
     throw new Error("There was a problem");
   }
 };
+
+export async function getStudent() {
+  const session = await getUser();
+
+  const student = await db.student.findFirst({
+    where: {
+      userId: session?.user.id,
+    },
+  });
+  return student!;
+}

@@ -75,21 +75,21 @@ const JobForm = ({ session }: { session: Session | null }) => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="space-x-2">
-          <Plus className="w- h-5 font-bold text-white" />
+          <Plus className="h-5 w-5 font-bold text-white" />
           <span className="font-medium">Add Job/Internship</span>
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="border-2 border-black sm:max-w-[800px]">
         <DialogHeader>
-          <DialogTitle>Job Creation Form</DialogTitle>
+          <DialogTitle className="text-xl font-bold">Create A Job</DialogTitle>
         </DialogHeader>
         <div className="p-5 md:p-3">
-          <div className="container">
-            <Form {...form}>
-              <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="flex flex-col gap-4"
-              >
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col gap-4"
+            >
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="type"
@@ -128,108 +128,154 @@ const JobForm = ({ session }: { session: Session | null }) => {
                     </FormItem>
                   )}
                 />
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <FormField
-                    control={form.control}
-                    name="location"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Location</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="salary"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Salary</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Expected salary" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="date"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Date</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                id="date"
-                                variant={"outline"}
-                                className={cn(
-                                  "w-[300px] justify-start text-left font-normal",
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {field.value?.from ? (
-                                  field.value.to ? (
-                                    <>
-                                      {format(field.value.from, "LLL dd, y")} -{" "}
-                                      {format(field.value.to, "LLL dd, y")}
-                                    </>
-                                  ) : (
-                                    format(field.value.from, "LLL dd, y")
-                                  )
-                                ) : (
-                                  <span>Pick a date</span>
-                                )}
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              initialFocus
-                              mode="range"
-                              defaultMonth={field.value?.from}
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              numberOfMonths={2}
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
                 <FormField
                   control={form.control}
-                  name="details"
+                  name="location"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Job Details</FormLabel>
+                      <FormLabel>Location</FormLabel>
                       <FormControl>
-                        <Textarea
-                          placeholder="Describe about the job"
-                          className="resize-none"
-                          {...field}
-                        />
+                        <Input {...field} />
                       </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="salary"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Salary</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Expected salary" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date of Application</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              id="date"
+                              variant={"outline"}
+                              className={cn(
+                                "w-[300px] flex-shrink justify-start text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              <CalendarIcon className="mr-2 h-4 w-4" />
+                              {field.value?.from ? (
+                                field.value.to ? (
+                                  <>
+                                    {format(field.value.from, "LLL dd, y")} -{" "}
+                                    {format(field.value.to, "LLL dd, y")}
+                                  </>
+                                ) : (
+                                  format(field.value.from, "LLL dd, y")
+                                )
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            initialFocus
+                            mode="range"
+                            defaultMonth={field.value?.from}
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            numberOfMonths={2}
+                            disabled={(date) => date < new Date()}
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
                       <FormDescription>
-                        Add a description about the job.
+                        Please provide the application period.
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="driveDate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date of Placement Drive</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "w-[240px] pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, "PPP")
+                              ) : (
+                                <span>Pick a date</span>
+                              )}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="end">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) => date < new Date()}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormDescription>
+                        Please provide a date of interview/ placement
+                        drive.&#40;Optional&#41;
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="items-center justify-center">
-                  Submit
-                </Button>
-              </form>
-            </Form>
-          </div>
+              </div>
+              <FormField
+                control={form.control}
+                name="details"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Job Details</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Describe about the job"
+                        className="resize-none"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Add a description about the job.
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <Button type="submit" className="items-center justify-center">
+                Submit
+              </Button>
+            </form>
+          </Form>
         </div>
       </DialogContent>
     </Dialog>

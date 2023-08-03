@@ -36,6 +36,8 @@ export default async function JobCard({ job }: JobCardProps) {
           </CardTitle>
           <CardDescription className="sm:text-md text-sm">
             {job.company.companyName}
+            <br />
+            {job.type}
           </CardDescription>
         </div>
       </CardHeader>

@@ -12,7 +12,7 @@ const DocumentUploadForm = () => {
       <UploadDropzone<OurFileRouter>
         endpoint="verifyDocUploader"
         onClientUploadComplete={(res) => {
-          router.push("/");
+          router.refresh();
           return toast({
             title: "Upload Complete!",
             description: `Your file ${res?.map(

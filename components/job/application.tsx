@@ -17,25 +17,40 @@ import {
 } from "../ui/dialog";
 import { useState } from "react";
 import { toast } from "../ui/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 
-type Props = {
+type ApplyButtonProps = {
   jobId: string;
   title: string;
   userId: string;
   hasApplied: boolean;
+  isDuplicate?: boolean;
 };
 
-export const JobApplyButton = ({ jobId, title, userId, hasApplied }: Props) => {
+export const JobApplyButton = ({
+  jobId,
+  title,
+  userId,
+  hasApplied,
+  isDuplicate,
+}: ApplyButtonProps) => {
   const [open, setOpen] = useState(false);
-  const [applied, setApplied] = useState(hasApplied);
+  const [applied, setApplied] = useState<boolean>(hasApplied);
 
-  return (
+  return isDuplicate && !hasApplied ? (
+    <Alert variant="destructive">
+      <AlertTitle className="text-bold">Oops!</AlertTitle>
+      <AlertDescription>
+        Looks like you have already applied for a job having the same interview
+        date. Please delete your application and re-apply.
+      </AlertDescription>
+    </Alert>
+  ) : (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
           onClick={async () => {
             await hasAppliedJob(jobId, userId);
-            setApplied(true);
           }}
           className={cn("bg-black", {
             "bg-blue-950": hasApplied,
@@ -74,7 +89,10 @@ export const JobApplyButton = ({ jobId, title, userId, hasApplied }: Props) => {
             endpoint="pdfWithInput"
             input={{ jobId }}
             onClientUploadComplete={(res) => {
+              setApplied(true);
+
               setOpen(false);
+
               return toast({
                 description: `Application have been successfully submitted!`,
               });

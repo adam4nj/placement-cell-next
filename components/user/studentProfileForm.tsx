@@ -39,7 +39,7 @@ const StudentProfileForm = ({ student }: { student: StudentDBType }) => {
       fName: student.fName,
       lName: student.lName!,
       email: student.email,
-      address: student.address!,
+      address: student.address || "",
       district: student.district!,
       state: student.state!,
       phone: student.phone!,
@@ -51,9 +51,9 @@ const StudentProfileForm = ({ student }: { student: StudentDBType }) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col w-full space-y-8 mx-auto justify-between"
+        className="mx-auto flex w-full flex-col justify-between space-y-8"
       >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
           <FormField
             control={form.control}
             name="fName"
@@ -136,7 +136,7 @@ const StudentProfileForm = ({ student }: { student: StudentDBType }) => {
             </FormItem>
           )}
         />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <FormField
             control={form.control}
             name="district"
@@ -178,14 +178,14 @@ const StudentProfileForm = ({ student }: { student: StudentDBType }) => {
           />
         </div>
         {form.formState.isDirty && (
-          <div className="flex flex-row flex-wrap gap-4 justify-between">
+          <div className="flex flex-row flex-wrap justify-between gap-4">
             <Button variant="destructive" onClick={() => form.reset()}>
               Cancel Changes
             </Button>
             <Button
               type="submit"
               className={
-                form.formState.isSubmitting ? "bg-slate-500 w-fit" : "w-fit"
+                form.formState.isSubmitting ? "w-fit bg-slate-500" : "w-fit"
               }
               disabled={form.formState.isSubmitting}
             >

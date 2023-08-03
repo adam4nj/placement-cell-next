@@ -8,14 +8,18 @@ import CurrentPath from "@/components/dashboard/pathname";
 import { ProfileNav } from "@/components/dashboard/profileNav";
 
 export const metadata: Metadata = {
-  title: "Company - Dashboard",
-  description: "Advanced form example using react-hook-form and Zod.",
+  title: "Student - Dashboard",
+  description: "Student Dashbaord for Placement Cell JMC",
 };
 
 const sideBarItems = [
   {
     href: "/dashboard/student",
     title: "Overview",
+  },
+  {
+    href: "/jobs",
+    title: "Available Jobs",
   },
   {
     href: "/dashboard/student/profile",

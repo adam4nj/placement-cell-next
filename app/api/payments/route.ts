@@ -1,6 +1,6 @@
 import { getUser } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { studentInternApplicationSchema } from "@/lib/validators/job-application";
+import { internSchema } from "@/lib/validators/intern";
 import { NextResponse } from "next/server";
 import Razorpay from "razorpay";
 
@@ -10,12 +10,11 @@ const razorpay = new Razorpay({
 });
 
 export async function POST(req: Request) {
-  const body = req.json();
+  const body = await req.json();
 
   const session = await getUser();
 
-  const { internappId, salary, job } =
-    studentInternApplicationSchema.parse(body);
+  const { internappId, internapp } = internSchema.parse(body);
 
   if (!session?.user) return new NextResponse("Unauthorized");
 
@@ -25,40 +24,33 @@ export async function POST(req: Request) {
         connect: {
           internappId,
           internapp: {
-            student: {
-              userId: session.user.id,
-            },
+            studentId: internapp.student.studentId,
           },
         },
       },
     },
   });
 
-  const payment = await razorpay.paymentLink.create({
-    amount: salary,
+  if (!internapp.job.salary) {
+    return new NextResponse("Free Internship");
+  }
+
+  await razorpay.paymentLink.create({
+    amount: internapp.job.salary,
     currency: "INR",
     accept_partial: true,
     expire_by: 1691097057,
     reference_id: payment_db.id,
     customer: {
-      name: job.company.companyName,
-      email: job.company.email,
-      contact: job.company.phone,
+      name: internapp.job.company.companyName,
+      email: internapp.job.company.email,
+      contact: internapp.job.company.phone,
     },
     notify: {
       sms: true,
       email: true,
     },
     reminder_enable: true,
-  });
-
-  await db.payments.update({
-    where: {
-      id: payment_db.id,
-    },
-    data: {
-      paymentLinkId: payment.id,
-    },
   });
 
   return NextResponse.json("OK");

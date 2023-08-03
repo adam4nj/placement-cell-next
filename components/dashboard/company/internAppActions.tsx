@@ -45,16 +45,16 @@ import { MoreHorizontal } from "lucide-react";
 
 import { Row } from "@tanstack/react-table";
 import { useState } from "react";
-import { companyJobApplicationSchema } from "@/lib/validators/job-application";
-import { changeJobAppStatus } from "@/actions/jobs";
+import { companyInternApplicationSchema } from "@/lib/validators/job-application";
+import { changeInternAppStatus } from "@/actions/jobs";
 import Link from "next/link";
 
 interface JobStatusProps<TData> {
   row: Row<TData>;
 }
 
-export function JobAppActions<TData>({ row }: JobStatusProps<TData>) {
-  const job = companyJobApplicationSchema.parse(row.original);
+export function InternAppActions<TData>({ row }: JobStatusProps<TData>) {
+  const job = companyInternApplicationSchema.parse(row.original);
   const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof statusSchema>>({
     resolver: zodResolver(statusSchema),
@@ -62,7 +62,7 @@ export function JobAppActions<TData>({ row }: JobStatusProps<TData>) {
 
   async function onSubmit(data: z.infer<typeof statusSchema>) {
     setOpen(false);
-    (await changeJobAppStatus(job.jobAppId, data.status))
+    (await changeInternAppStatus(job.internAppId, data.status))
       ? toast({
           title: "Status Updated",
           description: `The job status was updated to ${data.status} `,
@@ -105,26 +105,22 @@ export function JobAppActions<TData>({ row }: JobStatusProps<TData>) {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <h4 className="flex flex-row space-x-2">
-              <span className="font-bold"> Job Title:</span>
+            <h4 className="flex flex-col align-text-top">
+              Job Title:
+              <br />
+              {job.job.title}
             </h4>
-            {job.job.title}
-            <h4 className="flex flex-row">
-              <span className="font-bold"> Applicant Name:</span>
+            <h4 className="flex flex-col ">
+              Applicant Name:
+              <br />
+              {job.student!.fName} {job.student!.lName}
             </h4>
-            {job.student!.fName} {job.student!.lName}
-            <h4 className="flex flex-row">
-              <span className="font-bold"> Applicant Course:</span>
-            </h4>
-            MCA
-            <h4 className="flex flex-row space-x-2">Resume:</h4>
-            <Link
-              href={job.resume}
-              target="_blank"
-              className="font-semibold underline"
-            >
-              View Resume
-            </Link>
+            <h2 className="flex flex-row space-x-2">
+              Resume:
+              <Link href={job.resume} target="_blank">
+                View Resume
+              </Link>
+            </h2>
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}

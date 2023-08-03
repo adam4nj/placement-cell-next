@@ -1,6 +1,6 @@
 import { jobcolumns } from "./columns";
 import { DataTable } from "@/components/dataTable";
-import { getAllInternships, getAllJobs } from "@/actions/jobs";
+import { getCompanyInternships, getCompanyJobs } from "@/actions/jobs";
 import { Job } from "@/lib/validators/job";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,8 +10,8 @@ import { Separator } from "@/components/ui/separator";
 
 const Jobs = async () => {
   const session = await getUser();
-  const jobdata = (await getAllJobs()) as Job[];
-  const internshipdata = (await getAllInternships()) as Job[];
+  const jobdata = (await getCompanyJobs()) as Job[];
+  const internshipdata = (await getCompanyInternships()) as Job[];
   return (
     <>
       <div className="mx-6 mb-2 mt-6 flex justify-between align-middle">

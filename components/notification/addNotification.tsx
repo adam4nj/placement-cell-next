@@ -33,6 +33,7 @@ import axios from "axios";
 import { toast } from "../ui/use-toast";
 import { Textarea } from "../ui/textarea";
 import { useState } from "react";
+import { addNotification } from "@/actions/notifications";
 
 type addNotifProps = {
   className?: string;
@@ -45,28 +46,15 @@ export default function AddNotifButton({ className }: addNotifProps) {
     resolver: zodResolver(newNotificationSchema),
   });
 
-  const { mutate: addNotification } = useMutation({
-    mutationFn: async ({ title, content, link }: NewNotification) => {
-      const payload: NewNotification = { title, content, link };
-      const { data } = await axios.post("/api/notifications", payload);
-      return data;
-    },
-    onError: () => {
-      return toast({
-        title: "Something went wrong.",
-        description: "Your job was not published. Please try again.",
-        variant: "destructive",
-      });
-    },
-    onSuccess: () => {
-      return toast({
-        description: "Your post has been published.",
-      });
-    },
-  });
-
   async function onSubmit(data: z.infer<typeof newNotificationSchema>) {
-    addNotification(data);
+    (await addNotification(data))
+      ? toast({
+          title: "Notification Posted",
+        })
+      : toast({
+          title: "An error occurred!.Please try again!",
+          variant: "destructive",
+        });
     form.reset(data);
     setOpen(false);
   }
@@ -75,7 +63,7 @@ export default function AddNotifButton({ className }: addNotifProps) {
       <DialogTrigger asChild>
         <Button className={cn(className)}>Add Notification</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="border-2 border-black sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Add Notification</DialogTitle>
           <DialogDescription>

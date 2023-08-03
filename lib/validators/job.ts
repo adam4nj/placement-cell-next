@@ -10,6 +10,7 @@ export const newJobSchema = z.object({
   salary: z.coerce.number().optional(),
   details: z.string().optional(),
   date: DateRange.optional(),
+  driveDate: z.date().optional(),
 });
 
 export type NewJob = z.infer<typeof newJobSchema>;
@@ -17,6 +18,8 @@ export type NewJob = z.infer<typeof newJobSchema>;
 export const jobSchema = z
   .object({
     jobId: z.string(),
+    startDate: z.date().optional(),
+    endDate: z.date().optional(),
   })
   .merge(newJobSchema);
 

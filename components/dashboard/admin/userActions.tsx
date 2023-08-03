@@ -47,6 +47,7 @@ import { MoreHorizontal } from "lucide-react";
 import { userSchema } from "@/lib/validators/usertable";
 import { Row } from "@tanstack/react-table";
 import { useState } from "react";
+import Link from "next/link";
 
 interface VerifyUserProps<TData> {
   row: Row<TData>;
@@ -115,6 +116,13 @@ export function UserActions<TData>({ row }: VerifyUserProps<TData>) {
               <br />
               {user.role}
             </h2>
+            <Link
+              href={user.verifyDoc}
+              target="_blank"
+              className="flex flex-col text-sky-900"
+            >
+              View Verification document
+            </Link>
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}

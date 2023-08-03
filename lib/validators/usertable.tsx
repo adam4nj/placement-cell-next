@@ -9,6 +9,7 @@ export const userSchema = z.object({
     message: "Username not found",
   }),
   status: z.enum(["Accepted", "Pending", "Rejected"]),
+  verifyDoc: z.string(),
 });
 
 export type User = z.infer<typeof userSchema>;

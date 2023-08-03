@@ -1,7 +1,6 @@
 import "./globals.css";
 import { Red_Hat_Display } from "next/font/google";
 import QueryProvider from "./providers";
-("./providers");
 import { Toaster } from "@/components/ui/toaster";
 
 export const metadata = {

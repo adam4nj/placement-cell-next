@@ -54,12 +54,12 @@ const StudentLoginPage = () => {
   });
 
   return (
-    <div className="h-screen w-full bg-black">
+    <div className="flex h-screen w-full flex-col items-center justify-center bg-[url('/assets/auth.jpg')]">
       <Image
-        src="assets/logo-dark.svg"
+        src="assets/logo-light.svg"
         alt="Placement Cell"
-        width={10}
-        height={10}
+        width={150}
+        height={150}
       />
       <Card className="mx-auto my-10 w-[400px] items-center justify-center py-5 align-middle md:w-[500px]">
         <CardHeader className="mx-auto items-center justify-items-center">

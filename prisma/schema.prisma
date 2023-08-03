@@ -126,6 +126,7 @@ model Job {
   type              JobType             @default(Job)
   startDate         DateTime?           @db.Date
   endDate           DateTime?           @db.Date
+  driveDate         DateTime?           @db.Date
   createdAt         DateTime            @default(now())
   details           String?             @db.Text
   orderId           String?
@@ -175,7 +176,7 @@ model Intern {
   paymentId   String?
   internapp   InternApplication @relation(fields: [internappId], references: [internAppId])
   internappId String            @unique
-  Payments    Payments[]
+  payments    Payments[]
 
   @@index([internappId])
 }

@@ -9,6 +9,7 @@ import {
 import dayjs from "dayjs";
 import DeleteJobAppButton from "@/components/jobApplication/deleteJobAppButton";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export const applied_columns: ColumnDef<StudentJobApplication>[] = [
   {
@@ -60,7 +61,7 @@ export const applied_columns: ColumnDef<StudentJobApplication>[] = [
   },
 ];
 
-export const replied_columns: ColumnDef<CompanyJobApplication>[] = [
+export const replied_columns: ColumnDef<StudentJobApplication>[] = [
   {
     accessorKey: "job.title",
     header: "Title",
@@ -82,8 +83,16 @@ export const replied_columns: ColumnDef<CompanyJobApplication>[] = [
     header: "Status",
     cell: ({ row }) => {
       const status = row.original.status;
-      if (status === "Accepted") return <Badge>Accepted</Badge>;
-      else return <span>{status}</span>;
+      return (
+        <Badge
+          className={cn({
+            "bg-emerald-600": status === "Accepted",
+            "bg-red-500": status === "Rejected",
+          })}
+        >
+          {status}
+        </Badge>
+      );
     },
   },
 ];

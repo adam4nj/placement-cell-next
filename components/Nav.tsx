@@ -6,10 +6,13 @@ import { useState, useEffect } from "react";
 import SignInButton from "./SignInButton";
 import Search from "./searchBox";
 import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 
 export default function Navbar() {
   const [state, setState] = useState(false);
   const { data: session } = useSession();
+  const currentPath = usePathname();
 
   const navigation = [
     { title: "Home", path: "/" },
@@ -107,7 +110,12 @@ export default function Navbar() {
                       key={idx}
                       className="text-md text-slate-200 hover:text-white"
                     >
-                      <Link href={item.path} className="block">
+                      <Link
+                        href={item.path}
+                        className={cn("block", {
+                          "border-b font-bold": currentPath === item.path,
+                        })}
+                      >
                         {item.title}
                       </Link>
                     </li>

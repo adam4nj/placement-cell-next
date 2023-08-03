@@ -1,7 +1,7 @@
-import { getUserStatus, verifiedUser } from "@/actions/user";
+import { verifiedUser } from "@/actions/user";
 import DocumentUploadForm from "@/components/auth/DocUpload";
 import { getUser } from "@/lib/auth";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
@@ -9,10 +9,10 @@ import Image from "next/image";
 
 const VerifyUserPage = async () => {
   const session = await getUser();
-  const status = await getUserStatus(session);
+  const status = session?.user.status;
   const verified = await verifiedUser(session);
 
-  if (!session) notFound();
+  if (!session) redirect("/");
   if (status === "Accepted")
     redirect(`dashboard/${session.user.role.toLowerCase()}`);
   return status === "Pending" ? (

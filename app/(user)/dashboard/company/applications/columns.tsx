@@ -9,6 +9,7 @@ import {
 import Link from "next/link";
 import { File } from "lucide-react";
 import { JobAppActions } from "@/components/dashboard/company/jobAppActions";
+import { InternAppActions } from "@/components/dashboard/company/internAppActions";
 
 export const appcolumns1: ColumnDef<CompanyJobApplication>[] = [
   {
@@ -139,7 +140,7 @@ export const appcolumns2: ColumnDef<CompanyInternApplication>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      return <JobAppActions row={row} />;
+      return <InternAppActions row={row} />;
     },
   },
 ];
