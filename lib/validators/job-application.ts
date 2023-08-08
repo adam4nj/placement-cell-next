@@ -15,25 +15,29 @@ export const studentJobApplicationSchema = z.object({
 export type StudentJobApplication = z.infer<typeof studentJobApplicationSchema>;
 
 export const studentInternApplicationSchema = z.object({
-  internappId: z.string(),
+  internAppId: z.string(),
   createdAt: z.date(),
-  salary: z.number(),
-  status: z.enum(["Accepted", "Rejected", "Processing", "Pending"]),
+  status: z.enum(["Accepted", "Rejected", "Pending"]),
   job: z.object({
     title: z.string(),
+    salary: z.number().nullable(),
     company: z.object({
       companyName: z.string(),
       email: z.string().email(),
-      phone: z.string(),
+      phone: z.string().nullable(),
     }),
   }),
 });
+
+export type StudentInternApplication = z.infer<
+  typeof studentInternApplicationSchema
+>;
 
 export const companyInternApplicationSchema = z.object({
   internAppId: z.string(),
   createdAt: z.date(),
   resume: z.string(),
-  status: z.enum(["Accepted", "Rejected", "Processing", "Pending"]),
+  status: z.enum(["Accepted", "Rejected", "Pending"]),
   job: z.object({
     title: z.string(),
     salary: z.number().nullable(),
@@ -50,7 +54,7 @@ export const companyJobApplicationSchema = z.object({
   jobAppId: z.string(),
   createdAt: z.date(),
   resume: z.string(),
-  status: z.enum(["Accepted", "Rejected", "Processing", "Pending"]),
+  status: z.enum(["Accepted", "Rejected", "Pending"]),
   job: z.object({
     title: z.string(),
     salary: z.number().nullable(),

@@ -6,22 +6,25 @@ import { Intern } from "@/lib/validators/intern";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "../ui/use-toast";
+import { redirect, useRouter } from "next/navigation";
 
 const InternCard = ({ internId, internappId, internapp }: Intern) => {
+  const router = useRouter();
   const { mutate: payIntern } = useMutation({
     mutationFn: async () => {
       const payload: Intern = { internId, internappId, internapp };
       const { data } = await axios.post("/api/payments", payload);
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      router.push(data);
       return toast({
-        title: "Good",
+        title: "Payment is processed. Do not go back!",
       });
     },
     onError: () => {
       return toast({
-        title: "Bad",
+        title: "Bad Connection",
         variant: "destructive",
       });
     },

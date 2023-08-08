@@ -65,7 +65,7 @@ export const columns: ColumnDef<JobWithCompany>[] = [
             <TooltipTrigger asChild>
               <Link href={`/jobs/${row.original.jobId}`}>
                 <Button variant="ghost" className="rounded-full">
-                  <Eye className="w-4 h-4" />
+                  <Eye className="h-4 w-4" />
                 </Button>
               </Link>
             </TooltipTrigger>

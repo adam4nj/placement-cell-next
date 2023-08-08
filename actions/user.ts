@@ -5,8 +5,14 @@ import { Status } from "@prisma/client";
 import * as bcrypt from "bcrypt";
 import { User } from "@/lib/validators/usertable";
 import { revalidatePath } from "next/cache";
-import { Feedback, feedbackSchema } from "@/lib/validators/feedback";
+import {
+  Feedback,
+  JobFeedback,
+  feedbackSchema,
+  jobFeedbackSchema,
+} from "@/lib/validators/feedback";
 import { Session } from "next-auth";
+import { string } from "zod";
 
 export async function bcryptHash(password: string) {
   const pw = await bcrypt.hash(password, 12);
@@ -72,9 +78,55 @@ export async function sendFeedback(id: string, body: Feedback) {
   });
 }
 
-export async function getFeedback() {
-  const feedbacks = await db.feedback.findMany();
+export async function sendJobFeedback(
+  student: string,
+  company: string,
+  body: JobFeedback
+) {
+  const { job, feedback, rating } = jobFeedbackSchema.parse(body);
+  await db.jobFeedback.create({
+    data: {
+      job,
+      feedback,
+      rating,
+      student: {
+        connect: {
+          userId: student,
+        },
+      },
+      company: {
+        connect: {
+          companyId: company,
+        },
+      },
+    },
+  });
+}
+
+export async function getCompanyFeedback(userId?: string) {
+  const feedbacks = await db.jobFeedback.findMany({
+    where: {
+      company: {
+        userId,
+      },
+    },
+  });
   return feedbacks;
+}
+
+export async function getFeedback() {
+  const feedback = await db.feedback.findMany();
+  return feedback;
+}
+
+export async function deleteJobFeedback(id: string) {
+  const feedback = await db.jobFeedback.delete({
+    where: {
+      id,
+    },
+  });
+  revalidatePath("/dashboard/company/feedback");
+  return feedback;
 }
 
 export async function deleteFeedback(id: string) {

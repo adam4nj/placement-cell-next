@@ -3,6 +3,7 @@ import { Notification } from "@prisma/client";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Link from "next/link";
+import { Separator } from "../ui/separator";
 
 dayjs.extend(relativeTime);
 
@@ -16,7 +17,7 @@ export function NotificationCard({ notification }: NotificationCardProps) {
       <div className="flex flex-row justify-between">
         <Link
           href={`/notifications/${notification.id}`}
-          className="text-sm text-left font-medium"
+          className="text-left text-sm font-medium"
         >
           {notification.title}
         </Link>
@@ -24,7 +25,7 @@ export function NotificationCard({ notification }: NotificationCardProps) {
           {dayjs(JSON.parse(JSON.stringify(notification.createdAt))).fromNow()}
         </p>
       </div>
-      <p className="text-sm text-muted-foreground">{notification.content}</p>
+      <Separator />
     </div>
   );
 }

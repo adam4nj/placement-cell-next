@@ -84,15 +84,16 @@ model VerificationToken {
 }
 
 model Company {
-  companyId   String  @id @default(cuid())
+  companyId   String        @id @default(cuid())
   companyName String
   email       String
-  address     String? @db.Text
+  address     String?       @db.Text
   phone       String?
   status      Status
-  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId      String  @unique
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String        @unique
   Job         Job[]
+  JobFeedback JobFeedback[]
 
   @@index([userId])
 }
@@ -114,6 +115,7 @@ model Student {
   Feedback          Feedback[]
   JobApplication    JobApplication[]
   InternApplication InternApplication[]
+  JobFeedback       JobFeedback[]
 
   @@index([userId])
 }
@@ -174,11 +176,26 @@ model InternApplication {
 model Intern {
   internId    String            @id @default(cuid())
   paymentId   String?
-  internapp   InternApplication @relation(fields: [internappId], references: [internAppId])
+  internapp   InternApplication @relation(fields: [internappId], references: [internAppId], onDelete: Cascade)
   internappId String            @unique
   payments    Payments[]
 
   @@index([internappId])
+}
+
+model JobFeedback {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  job       String
+  feedback  String?  @db.Text
+  rating    Int
+  student   Student  @relation(fields: [studentId], references: [studentId], onDelete: Cascade)
+  studentId String
+  company   Company  @relation(fields: [companyId], references: [companyId], onDelete: Cascade)
+  companyId String
+
+  @@index([studentId])
+  @@index([companyId])
 }
 
 model Feedback {

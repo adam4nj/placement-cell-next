@@ -12,9 +12,14 @@ export const registerFormSchema = z
     username: z.string().min(8, {
       message: "Username must be at least 8 characters.",
     }),
-    password: z.string().min(8, {
-      message: "Password must be at least 8 characters.",
-    }),
+    password: z
+      .string()
+      .min(8, {
+        message: "Password must be at least 8 characters.",
+      })
+      .regex(
+        /^(?!.*\s)(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[~`!@#$%^&*()--+={}\[\]|\\:;"'<>,.?/_₹]).{10,16}$/
+      ),
     confirmPassword: z
       .string()
       .min(1, { message: "Password confirmation is required" }),
@@ -41,9 +46,14 @@ export const loginFormSchema = z.object({
   username: z.string().min(8, {
     message: "Username must be at least 8 characters.",
   }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
-  }),
+  password: z
+    .string()
+    .min(8, {
+      message: "Password must be at least 8 characters.",
+    })
+    .regex(
+      /^(?!.*\s)(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[~`!@#$%^&*()--+={}\[\]|\\:;"'<>,.?/_₹]).{10,16}$/
+    ),
 });
 
 export type LoginFormType = z.infer<typeof loginFormSchema>;

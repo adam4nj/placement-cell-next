@@ -160,6 +160,33 @@ export async function createJob(session: Session | null, data: NewJob) {
   }
 }
 
+export async function getCurrentIntern() {
+  const session = await getUser();
+  const intern = await db.intern.findFirst({
+    where: {
+      internapp: {
+        student: {
+          userId: session?.user.id,
+        },
+      },
+    },
+    include: {
+      internapp: {
+        include: {
+          job: {
+            include: {
+              company: true,
+            },
+          },
+          student: true,
+        },
+      },
+    },
+  });
+
+  return intern;
+}
+
 export async function editJob(data: Job) {
   const { jobId, title, type, location, salary, details } =
     jobSchema.parse(data);
@@ -240,16 +267,32 @@ export const changeInternAppStatus = async (
 
   revalidatePath("/dashboard/company/jobs");
 
-  if (application.status === "Accepted") {
-    await db.intern.create({
-      data: {
-        internappId: application.internAppId,
-      },
-    }); //unique constraint error
-  }
-
-  return { internAppId };
+  return { internAppId, application };
 };
+
+export async function createIntern(internAppId: string) {
+  const exists = await db.intern.findFirst({
+    where: {
+      internappId: internAppId,
+    },
+  });
+
+  if (exists) throw Error("Intern already exists!");
+
+  const intern = await db.intern.create({
+    data: {
+      internapp: {
+        connect: {
+          internAppId,
+        },
+      },
+    },
+  });
+
+  revalidatePath("/dashboard/company/interns");
+
+  return { intern };
+}
 
 export const getStudentJobs = async () => {
   const session = await getUser();
@@ -270,6 +313,68 @@ export const getStudentJobs = async () => {
 
   return appliedJobs;
 };
+
+export const getStudentIJobs = async () => {
+  const session = await getUser();
+  const appliedJobs = await db.internApplication.findMany({
+    where: {
+      student: {
+        userId: session?.user.id,
+      },
+    },
+    include: {
+      job: {
+        include: {
+          company: true,
+        },
+      },
+    },
+  });
+
+  return appliedJobs;
+};
+
+export const getAcceptedInternships = async () => {
+  const session = await getUser();
+
+  const acceptedJobs = await db.internApplication.findMany({
+    where: {
+      student: {
+        userId: session?.user.id,
+      },
+      status: "Accepted",
+      NOT: {
+        Intern: {
+          isNot: null,
+        },
+      },
+    },
+    include: {
+      job: {
+        include: {
+          company: true,
+        },
+      },
+    },
+  });
+
+  return acceptedJobs;
+};
+
+export async function isIntern() {
+  const session = await getUser();
+  const intern = await db.intern.findFirst({
+    where: {
+      internapp: {
+        student: {
+          userId: session?.user.id,
+        },
+      },
+    },
+  });
+
+  return !!intern;
+}
 
 export const getAllJobApplications = async () => {
   const session = await getUser();

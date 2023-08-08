@@ -35,12 +35,12 @@ export async function POST(req: Request) {
     return new NextResponse("Free Internship");
   }
 
-  await razorpay.paymentLink.create({
+  const payment = await razorpay.paymentLink.create({
     amount: internapp.job.salary,
     currency: "INR",
     accept_partial: true,
-    expire_by: 1691097057,
     reference_id: payment_db.id,
+    callback_url: process.env.RAZORPAY_COMPANY_CALLBACK,
     customer: {
       name: internapp.job.company.companyName,
       email: internapp.job.company.email,
@@ -53,5 +53,7 @@ export async function POST(req: Request) {
     reminder_enable: true,
   });
 
-  return NextResponse.json("OK");
+  const paymentlink = await razorpay.paymentLink.fetch(payment.id);
+
+  return new Response(payment.short_url);
 }

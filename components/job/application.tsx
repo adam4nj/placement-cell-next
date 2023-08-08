@@ -1,23 +1,31 @@
 "use client";
 
-import { Check } from "lucide-react";
-import { Button } from "../ui/button";
-import { hasAppliedJob } from "@/actions/jobs";
-import { cn } from "@/lib/utils";
+import { useDropzone } from "react-dropzone";
+import type { FileWithPath } from "react-dropzone";
 
-import { UploadDropzone } from "@/utils/uploadthing";
+import { useUploadThing } from "@/utils/uploadthing";
+
+import { Check, Loader2 } from "lucide-react";
+import { Button } from "../ui/button";
+import { hasAppliedInternship, hasAppliedJob } from "@/actions/jobs";
+import { cn } from "@/lib/utils";
 
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogFooter,
+  DialogTitle,
   DialogHeader,
   DialogTrigger,
 } from "../ui/dialog";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "../ui/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
+import { generateClientDropzoneAccept } from "uploadthing/client";
+import { useSession } from "next-auth/react";
+import { Card } from "../ui/card";
+import { Checkbox } from "../ui/checkbox";
 
 type ApplyButtonProps = {
   jobId: string;
@@ -34,8 +42,47 @@ export const JobApplyButton = ({
   hasApplied,
   isDuplicate,
 }: ApplyButtonProps) => {
+  const [files, setFiles] = useState<File[]>([]);
+  const [checked, setChecked] = useState(false);
+  const onDrop = useCallback((acceptedFiles: FileWithPath[]) => {
+    setFiles((previousFiles) => [
+      ...previousFiles,
+      ...acceptedFiles.map((file) =>
+        Object.assign(file, { preview: URL.createObjectURL(file) })
+      ),
+    ]);
+  }, []);
+  const fileTypes = ["application/pdf"];
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: fileTypes ? generateClientDropzoneAccept(fileTypes) : undefined,
+    maxFiles: 1,
+  });
+
+  const { startUpload, isUploading } = useUploadThing("pdfWithInput", {
+    onClientUploadComplete: () => {
+      setApplied(true);
+
+      setOpen(false);
+
+      return toast({
+        description: `Application have been successfully submitted!`,
+      });
+    },
+    onUploadError: () => {
+      return toast({
+        description: `We have encountered an error. Please try again..`,
+        variant: "destructive",
+      });
+    },
+  });
   const [open, setOpen] = useState(false);
   const [applied, setApplied] = useState<boolean>(hasApplied);
+  const removeFile = (name: string) => {
+    setFiles((files) => files.filter((file) => file.name !== name));
+  };
+  const { data: session } = useSession();
 
   return isDuplicate && !hasApplied ? (
     <Alert variant="destructive">
@@ -50,7 +97,8 @@ export const JobApplyButton = ({
       <DialogTrigger asChild>
         <Button
           onClick={async () => {
-            await hasAppliedJob(jobId, userId);
+            (await hasAppliedJob(jobId, userId)) ||
+              (await hasAppliedInternship(jobId, userId));
           }}
           className={cn("bg-black", {
             "bg-blue-950": hasApplied,
@@ -67,44 +115,67 @@ export const JobApplyButton = ({
           )}
         </Button>
       </DialogTrigger>
-      <DialogContent className="h-fit w-full px-10">
-        <DialogHeader>Apply to this position</DialogHeader>
-        <DialogDescription>
-          Please upload your up-to-date resume
-        </DialogDescription>
-        <div className="flex flex-col justify-between gap-2 md:flex-row">
-          <div>
-            <span className="font-semibold">Job ID</span>
-            <br />
-            {jobId}
-          </div>
-          <div>
-            <span className="font-semibold">Applied Position</span>
-            <br />
+      <DialogContent className="border-2 border-black sm:max-h-[400px] sm:max-w-[600px]">
+        <DialogHeader className="font-bold">
+          <DialogTitle className="text-2xl font-bold">
+            Apply to this position
+          </DialogTitle>
+          <DialogDescription>
+            Please upload your up-to-date resume
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="grid grid-cols-2 gap-2">
+          <Card className="flex flex-col px-7 py-2">
+            <span className="font-bold">Applied Position</span>
             {title}
+          </Card>
+          <Card className="flex flex-col px-7 py-2">
+            <span className="font-bold">Applicant Name</span>
+            {session?.user.name}
+          </Card>
+        </div>
+        {files.length > 0 ? (
+          files.map((file) => (
+            <>
+              <span className="text-center">Selected File : {file.name}</span>
+              <span>{isUploading && <Loader2 />}</span>
+              <div className="block space-x-2 py-2 text-center">
+                <Checkbox
+                  checked={checked}
+                  onCheckedChange={() => setChecked(!checked)}
+                />
+                <span>
+                  I have completely understood the requirements needed for the
+                  job.
+                </span>
+              </div>
+              <div className="flex flex-row justify-between">
+                <Button
+                  variant="destructive"
+                  onClick={() => removeFile(file.name)}
+                >
+                  Remove File
+                </Button>
+                <DialogFooter>
+                  <Button
+                    disabled={!checked}
+                    onClick={() => startUpload(files, { jobId })}
+                  >
+                    Upload Resume
+                  </Button>
+                </DialogFooter>
+              </div>
+            </>
+          ))
+        ) : (
+          <div className="bg-slate-100 p-10 text-center text-xl font-bold text-slate-500 drop-shadow-md">
+            <div {...getRootProps()}>
+              <input {...getInputProps()} />
+              Drop your resume here..
+            </div>
           </div>
-        </div>
-        <div className="m-10 rounded-lg border border-slate-300 bg-slate-100 px-5 text-center shadow-inner">
-          <UploadDropzone
-            endpoint="pdfWithInput"
-            input={{ jobId }}
-            onClientUploadComplete={(res) => {
-              setApplied(true);
-
-              setOpen(false);
-
-              return toast({
-                description: `Application have been successfully submitted!`,
-              });
-            }}
-            onUploadError={(error: Error) => {
-              return toast({
-                description: `We have encountered an error.${error.message} Please try again..`,
-                variant: "destructive",
-              });
-            }}
-          />
-        </div>
+        )}
       </DialogContent>
     </Dialog>
   );

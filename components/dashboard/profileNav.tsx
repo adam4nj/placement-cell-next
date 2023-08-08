@@ -15,12 +15,14 @@ import {
 
 import { signOut } from "next-auth/react";
 import { Session } from "next-auth";
+import { useRouter } from "next/navigation";
 
 interface ProfileNavProps {
   session: Session;
 }
 
 export function ProfileNav({ session }: ProfileNavProps) {
+  const router = useRouter();
   return session.user ? (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -46,17 +48,9 @@ export function ProfileNav({ session }: ProfileNavProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push("profile")}>
             <User className="mr-2 h-4 w-4" />
             <span>Profile</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            <span>New Admin User</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

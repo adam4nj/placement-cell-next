@@ -24,12 +24,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
-import { useMutation } from "@tanstack/react-query";
-import {
-  newNotificationSchema,
-  NewNotification,
-} from "@/lib/validators/notification";
-import axios from "axios";
+import { newNotificationSchema } from "@/lib/validators/notification";
 import { toast } from "../ui/use-toast";
 import { Textarea } from "../ui/textarea";
 import { useState } from "react";

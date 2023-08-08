@@ -5,6 +5,7 @@ import {
   isDuplicate,
 } from "@/actions/jobs";
 import { BackButton } from "@/components/backButton";
+import { JobFeedbackForm } from "@/components/job/JobFeedback";
 import { JobApplyButton } from "@/components/job/application";
 import { Separator } from "@/components/ui/separator";
 import { getUser } from "@/lib/auth";
@@ -13,7 +14,7 @@ import { cn } from "@/lib/utils";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
 
 dayjs.extend(relativeTime);
 
@@ -34,19 +35,18 @@ export default async function Page({ params }: JobParams) {
 
   const duplicate = await isDuplicate(job.driveDate);
 
-  console.log(duplicate);
-
-  const hasApplied = await (hasAppliedJob(params.jobId, session.user.id) ||
-    hasAppliedInternship(params.jobId, session.user.id));
+  const hasApplied =
+    (await hasAppliedJob(params.jobId, session.user.id)) ||
+    (await hasAppliedInternship(params.jobId, session.user.id));
 
   return (
     <div className="ml-3 flex flex-col space-y-4 py-5">
       <BackButton className="mx-0 md:-mx-3" />
-      <h1 className="text-3xl">Position Details</h1>
+      <h1 className="text-3xl font-black">Position Details</h1>
 
       <section
         key={job.jobId}
-        className="container flex flex-col  rounded-lg border py-10"
+        className="container flex flex-col rounded-lg border-2 border-slate-700 bg-white py-10 drop-shadow-sm"
       >
         <div className="flex flex-col-reverse justify-between gap-2 md:flex-row">
           <h2 className="text-4xl font-extrabold">{job.title}</h2>
@@ -75,12 +75,18 @@ export default async function Page({ params }: JobParams) {
           )}
         </div>
 
-        <Separator className="my-5" />
+        <Separator className="my-5 bg-slate-600/60" />
         <div className="space-y-4">
           <h5 className="text-xl font-bold">Job Description</h5>
           <p className="text-lg font-medium">{job.details}</p>
         </div>
       </section>
+      <JobFeedbackForm
+        userId={session.user.id}
+        title={job.title}
+        company={job.company.companyName}
+        companyId={job.companyId}
+      />
     </div>
   );
 }

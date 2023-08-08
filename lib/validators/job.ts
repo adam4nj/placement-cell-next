@@ -4,7 +4,9 @@ import { DateRange } from "react-day-picker";
 const DateRange: z.ZodType<DateRange> = z.any();
 
 export const newJobSchema = z.object({
-  title: z.string(),
+  title: z.string().min(1, {
+    message: "Please provide a title!",
+  }),
   type: z.enum(["Job", "Internship"]),
   location: z.string().optional(),
   salary: z.coerce.number().optional(),

@@ -39,7 +39,7 @@ const StudentProfileForm = ({ student }: { student: StudentDBType }) => {
       fName: student.fName,
       lName: student.lName!,
       email: student.email,
-      address: student.address || "",
+      address: student.address ?? "",
       district: student.district!,
       state: student.state!,
       phone: student.phone!,

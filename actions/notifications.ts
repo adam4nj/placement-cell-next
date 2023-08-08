@@ -9,7 +9,11 @@ import {
 import { revalidatePath } from "next/cache";
 
 export const getAllNotifications = async () => {
-  const notification = await db.notification.findMany();
+  const notification = await db.notification.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
   revalidatePath("/dashboard/admin/notifications");
   return notification;
 };
@@ -29,11 +33,13 @@ export async function addNotification(data: NewNotification) {
     const note = await db.notification.create({
       data: {
         title: data.title,
-        content: data.title,
+        content: data.content,
         link: data.link,
         userId: session?.user.id,
       },
     });
+    revalidatePath("/dashboard/company/notifications");
+
     return note;
   }
 }

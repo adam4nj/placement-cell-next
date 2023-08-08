@@ -6,9 +6,6 @@ import { getAllPosts } from "@/actions/jobs";
 import { notFound } from "next/navigation";
 import Search from "@/components/searchBox";
 
-import { JobTypeSelect } from "@/components/job/jobTypeSelect";
-import { JobType } from "@prisma/client";
-
 const JobFeed = async ({
   searchParams,
 }: {
@@ -22,7 +19,6 @@ const JobFeed = async ({
   return (
     <>
       <Search />
-      <JobTypeSelect selected={selected} />
       <ScrollArea>
         <ul className="grid grid-cols-1 gap-5 px-3 py-5 md:grid-cols-2">
           {jobs.map((job, index) => {
